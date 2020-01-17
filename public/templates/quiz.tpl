@@ -11,10 +11,8 @@
                 <a href="https://www.miniaturephotographer.com" title="The Miniature Photographer">https://www.miniaturephotographer.com</a>
             </div>
             </noscript>
-            <div id="textContainer">
-                <h1 id="subject">Intoxication Trivia</h1>               
-            </div>
- 
+
+
         </div>
         <div id="support">
             <h1>Help Support Intoxication Trivia</h1>
@@ -26,8 +24,8 @@
                 <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
             </form>
             <p>Feel free to unscribe at anytime by pressing the <A HREF="https://www.paypal.com/cgi-bin/webscr?cmd=_subscr-find&alias=9R2SNEGYQJLHL">
-<IMG SRC="https://www.paypalobjects.com/en_US/i/btn/btn_unsubscribe_LG.gif" BORDER="0">
-</A> button.</p>
+                    <IMG SRC="https://www.paypalobjects.com/en_US/i/btn/btn_unsubscribe_LG.gif" BORDER="0">
+                </A> button.</p>
 
         </div>
         {block name=aside}
@@ -42,5 +40,7 @@
 
 {block name=trivijs}
     <!-- Trivia Game JavaScript -->
+    <script src="assets/js/promise.min.js"></script>
+    <script src="assets/js/fetch.umd.js"></script>
     <script src="assets/js/quiz.js"></script>
 {/block}
