@@ -1,41 +1,231 @@
 /*
- *  Trivia Game Version 1.15 beta with XML
+ *  Trivia Game Version 1.16 beta using FETCH/JSON
  *  by John Pepp
- *  Started: January 15, 2020
- *  Revised: January 14, 2020
+ *  Started: January 14, 2020
+ *  Revised: January 16, 2020
  */
-'use strict';
+/* global fetch */
 
-const quizUrl = 'quizdatabase.php?';
+'use strict';
+var d = document,
+        container = d.querySelector('#triviaContainer'),
+        totalQuest = container.getAttribute('data-records'),
+        selectForm = container.appendChild(d.createElement('form')),
+        hiddenField = selectForm.appendChild((d.createElement('input'))),
+        setLabelEle = selectForm.appendChild(d.createElement('label')),
+        selectCatEle = selectForm.appendChild(d.createElement('select')),
+        optionEle1 = d.createElement('option'),
+        optionEle2 = d.createElement('option'),
+        optionEle3 = d.createElement('option'),
+        score = 0,
+        num = 1,
+        seconds = 0,
+        dSec = 15,
+        timer = null,
+        indexId = 0;
+
+const quizUrl = 'quizdatabase.php?'; // PHP database script 
 
 /*
- * Select Trivia Category Variable
+ * Sets up display, questions, answers and displays
+ * first question and multiple answers.
+ * @param {type} data
+ * @returns none
+ */
+const display = function (data) {
+    //d.querySelector("#categories-form").style.display = "none";
+    var
+            count = 0,
+            records = container.getAttribute('data-records'),
+            textDiv = container.appendChild(d.createElement('div')),
+            textH1 = textDiv.appendChild(d.createElement('h1')),
+            clock = textDiv.appendChild(d.createElement('h2'));
+
+
+    textDiv.id = 'textContainer';
+    textH1.textContent = 'Category : ' + d.querySelector('#category').value;
+    textH1.id = 'subject';
+    clock.id = 'clock';
+    selectForm.style.display = 'none';
+    textDiv.style.display = 'block';
+
+    //console.log('Total Records', records);
+    for (var i = 0; i < records; i++) {
+        //console.log(data[i]);
+        var
+                idIndex = i + 1,
+                mainGame = container.appendChild(d.createElement('div')),
+                screen = mainGame.appendChild(d.createElement('div')),
+                q = screen.appendChild(d.createElement('h2')),
+                ansArray = [data[i].answer1, data[i].answer2, data[i].answer3, data[i].answer4];
+
+
+        mainGame.id = 'mainGame' + idIndex;
+        mainGame.setAttribute('data-id', data[i].id);
+        screen.className = 'screen';
+
+        q.id = 'question' + idIndex;
+        q.appendChild(d.createTextNode(data[i].question));
+
+        for (var j = 0; j < 4; j++) {
+            var
+                    button = mainGame.appendChild(d.createElement('button'));
+
+
+            button.setAttribute('data-correct', j + 1);
+
+            button.className = 'buttonStyle';
+            button.id = 'button' + (++count);
+            button.appendChild(d.createTextNode(ansArray[j]));
+        } // for j
+    } // for i
+
+    var
+            scoring = container.appendChild(d.createElement('div')),
+            scoreElement = scoring.appendChild(d.createElement('h2')),
+            displayPercent = scoring.appendChild(d.createElement('h2')),
+            nextStyle = container.appendChild(d.createElement('div')),
+            nextButton = nextStyle.appendChild(d.createElement('button'));
+
+    scoring.id = 'scoring';
+    scoreElement.id = 'score';
+    scoreElement.textContent = "Score 0 Points";
+    displayPercent.id = 'percent';
+    displayPercent.textContent = "100%";
+    nextStyle.id = "nextStyle";
+    nextButton.id = 'next';
+    nextButton.className = 'nextBtn';
+    nextButton.textContent = 'Next';
+    
+
+    d.querySelector('#mainGame1').style.display = "block";
+
+
+};
+
+/*
+ * Countdown Timer For Quiz Game
+ */
+function countdown() {
+    var counter = 0;
+    if (seconds === 0) {
+        clearTimeout(timer);
+        d.getElementById('clock').style['color'] = "red";
+        d.getElementById('clock').textContent = 'Time has Expired!';
+        indexId = indexId + 4;
+        d.removeEventListener('click', clickHandler, false);
+        d.getElementById('next').addEventListener('click', nextButtonHandler, false);
+
+    } else {
+        if (seconds < 10) {
+            counter = '0' + seconds;
+        } else {
+            counter = seconds;
+        }
+        d.getElementById('clock').textContent = 'There are ' + counter + ' seconds left!';
+        seconds--;
+    }
+}
+
+/*
+ * Determine what answer button was pressed and
+ * send a fetch request (promise). 
+ */
+const clickHandler = function (e) {
+    e.preventDefault();
+    //console.log('e.target', e.target);
+    if (e.target.classList.contains('buttonStyle') === true) {
+        clearInterval(timer);
+        console.log('data-id', e.target.parentNode.getAttribute('data-id'));
+        console.log('e.target', e.target.textContent);
+        const answerUrl = "checkanswer.php?id=" + e.target.parentNode.getAttribute('data-id') + "&answer=" + e.target.getAttribute('data-correct');
+        console.log("file path", answerUrl);
+        d.removeEventListener('click', clickHandler, false);
+        createRequest(answerUrl, pressedUISuccess, pressedUIError);
+    }
+};
+
+/*
+ * Add Listener to Document (Page) and Remove Next Button Listener
+ */
+const pressedButton = function () {
+    d.getElementById('next').removeEventListener('click', nextButtonHandler, false);
+    //timer = setInterval(countdown, 1000);
+    d.addEventListener('click', clickHandler, false);
+};
+
+/*
+ * 
+ * @param {type} dSec
+ * Start Timer
+ * 
+ */
+const startTimer = function (dSec) {
+    seconds = dSec;
+    d.getElementById('clock').style['color'] = "green";
+    d.getElementById('clock').textContent = 'There are ' + seconds + ' seconds left!';
+    timer = setInterval(countdown, 1000);
+};
+
+/*
+ * Goto Next Question Setup clickHandler function
+ */
+function nextButtonHandler(e) {
+    e.preventDefault();
+    d.querySelector('#mainGame' + num).style.display = 'none';
+    num++;
+    d.querySelector('#mainGame' + num).style.display = 'block';
+    
+    startTimer(dSec);
+    pressedButton();
+}
+
+
+/*
+ * Fetch Correct Answer then Compare Against User's Answer
+ */
+const pressedUISuccess = function (check) {
+    var questionId = parseInt(check.id),
+            answer = parseInt(check.answer),
+            correct = check.correct;
+    console.log(questionId, answer, correct);
+
+    if (answer === correct) {
+        console.log("correct");
+        d.querySelector('#button' + (correct + indexId)).style['background-color'] = 'green';
+    } else {
+        console.log("wrong");
+        d.querySelector('#button' + (correct + indexId)).style['background-color'] = 'green';
+        d.querySelector('#button' + (answer + indexId)).style['background-color'] = 'red';
+    }
+    indexId = indexId + 4;
+    console.log('Total', num);
+    /*
+     * Add Next Button Event Listener 
+     */
+    d.getElementById('next').addEventListener('click', nextButtonHandler, false);
+};
+
+const pressedUIError = function (error) {
+    console.log(error);
+};
+
+
+/*
+ * Grab Records (Questions and Answers) from the MySQL Table
+ * using Fetch (AJAX)
  */
 
 const quizUISuccess = function (parsedData) {
-    //const parsedData = JSON.parse(data);
-    console.log(parsedData, parsedData.length);
     const records = parsedData.length;
     container.setAttribute('data-records', records);
-    console.log(container);
-    //console.log(parsedData[0]);
-    //console.log(parsedData[0].question);
-    //console.log(parsedData[1].question);
-
+    display(parsedData);
+    startTimer(dSec);
+    pressedButton();
 };
 
 const quizUIError = function (error) {
     console.log(error);
-};
-
-const responseMethod = function (httpRequest, succeed, fail) {
-    if (httpRequest.readyState === 4) {
-        if (httpRequest.status === 200) {
-            succeed(httpRequest.responseText);
-        } else {
-            fail(httpRequest.status + ': ' + httpRequest.responseText);
-        }
-    }
 };
 
 
@@ -68,13 +258,13 @@ const createRequest = function (url, succeed, fail) {
 
 const selectCat = function () {
 
-    const requestUrl = quizUrl + 'category=' + category.value;
-    console.log('requestURL', requestUrl);
+    //console.log(d.querySelector('#category').value);
+    const requestUrl = quizUrl + 'category=' + d.querySelector('#category').value;
     createRequest(requestUrl, quizUISuccess, quizUIError);
 };
 
 /*
- * Add an event listener to form
+ * Add an event listener to Selection Form
  */
 
 
@@ -113,17 +303,7 @@ const createDynamicForm = function () {
 };
 
 
-var d = document,
-        container = d.querySelector('#triviaContainer'),
-        totalQuest = container.getAttribute('data-records'),
-        selectForm = container.appendChild(d.createElement('form')),
-        hiddenField = selectForm.appendChild((d.createElement('input'))),
-        setLabelEle = selectForm.appendChild(d.createElement('label')),
-        selectCatEle = selectForm.appendChild(d.createElement('select')),
-        optionEle1 = d.createElement('option'),
-        optionEle2 = d.createElement('option'),
-        optionEle3 = d.createElement('option');
-console.log(container);
+
 
 /*
  * Wait until the DOM is load to Create Form and Load Data From Form
@@ -132,13 +312,15 @@ console.log(container);
 window.addEventListener('DOMContentLoaded', () => {
 
     createDynamicForm();
-    const category =d.querySelector('#category');
-    console.log('Category', category);
+
 
     /*
-     * Send Trivia Category to fetch Quiz Data from MySQL Database
+     * Add an event listener so when user selects category the
+     * Trivia Category to MySQL Database in order to "fetch"
+     * when user selects a trivia category.
      */
-    category.addEventListener('change', selectCat);
+
+    d.querySelector('#category').addEventListener('change', selectCat);
 
 });
 
