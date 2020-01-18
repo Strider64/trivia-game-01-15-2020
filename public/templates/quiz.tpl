@@ -42,5 +42,5 @@
     <!-- Trivia Game JavaScript -->
     <script src="assets/js/promise.min.js"></script>
     <script src="assets/js/fetch.umd.js"></script>
-    <script src="assets/js/quiz.js"></script>
+    <script src="assets/js/quiz_ver_02.js"></script>
 {/block}
