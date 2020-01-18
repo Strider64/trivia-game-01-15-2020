@@ -17,6 +17,10 @@ var d = document,
         optionEle2 = d.createElement('option'),
         optionEle3 = d.createElement('option'),
         score = 0,
+        right = 0,
+        wrong = 0,
+        average = 0,
+        totalQ = 0,
         trivIndex = 0,
         num = 1,
         seconds = 0,
@@ -123,6 +127,8 @@ function countdown() {
         d.getElementById('clock').textContent = 'Time has Expired!';
         trivIndex += 1;
         score -= penalty;
+        wrong += 1;
+        calcPercent();
         d.querySelector('#score').textContent = "Score " + score + " Points";
         for (var y = 1; y <= 4; y++) {
             d.querySelector('#button' + y).removeEventListener('click', clickHandler, false);
@@ -190,6 +196,7 @@ const clickHandler = function (e) {
 
 };
 
+
 /*
  * Add Listener to Document (Page) and Remove Next Button Listener
  */
@@ -211,12 +218,15 @@ function nextButtonHandler(e) {
     e.preventDefault();
     //startTimer(dSec);
     for (var y = 1; y <= 4; y++) {
-        d.querySelector('#button' + y).style['background-color'] = '#336699';
+        d.querySelector('#button' + y).removeAttribute('style');
     }
     gamePlay();
     pressedButton();
 }
-
+const calcPercent = function() {
+    average = (right / (right + wrong)) * 100;
+    d.getElementById('percent').textContent = average.toFixed(0) + "%";
+};
 
 /*
  * Fetch Correct Answer then Compare Against User's Answer
@@ -227,16 +237,18 @@ const pressedUISuccess = function (check) {
             correct = check.correct;
 
     if (answer === correct) {
+        right += 1;
         score += points;
         d.querySelector('#button' + correct).style['background-color'] = 'green';
     } else {
+        wrong += 1;
         score -= penalty;
         d.querySelector('#button' + correct).style['background-color'] = 'green';
         d.querySelector('#button' + answer).style['background-color'] = 'red';
     }
     d.querySelector('#score').textContent = "Score " + score + " Points";
     trivIndex += 1; // Next Record:
-    
+    calcPercent();
     /*
      * Add Next Button Event Listener 
      */
