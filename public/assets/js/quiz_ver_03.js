@@ -1,8 +1,8 @@
 /*
- *  Trivia Game Version 1.18.02 beta using FETCH/JSON
+ *  Trivia Game Version 1.19.02 beta using FETCH/JSON
  *  by John Pepp
  *  Started: January 14, 2020
- *  Revised: January 18, 2020
+ *  Revised: January 19, 2020
  */
 
 'use strict';
@@ -19,11 +19,12 @@ var d = document,
         seconds = 0,
         timer = null,
         indexId = 0,
-        movieData = null;
+        movieData = null,
+        errFlag = false;
 
 const dSec = 15;
 
-
+const categoriesForm = d.querySelector('#categories-form');
 const textContainer = d.querySelector('#textContainer');
 textContainer.style.display = "none";
 const mainGame = d.querySelector('#mainGame');
@@ -38,14 +39,25 @@ const points = 100,
 
 const quizUrl = 'quizdatabase.php?'; // PHP database script 
 
+/*
+ * Add Listener to Document (Page) and Remove Next Button Listener
+ */
+const pressedButton = function () {
+    d.getElementById('next').removeEventListener('click', nextButtonHandler, false);
+
+    d.querySelector('#button1').addEventListener('click', clickHandler, false);
+    d.querySelector('#button2').addEventListener('click', clickHandler, false);
+    d.querySelector('#button3').addEventListener('click', clickHandler, false);
+    d.querySelector('#button4').addEventListener('click', clickHandler, false);
+};
+
 
 
 const gamePlay = () => {
+
     /*
      * Insert Record Id, Questions and Answers into HTML
      */
-
-
     var id = d.querySelector('#mainGame'),
             question = d.querySelector('#question'),
             button1 = d.querySelector('#button1'),
@@ -61,10 +73,25 @@ const gamePlay = () => {
     button4.textContent = movieData[trivIndex].answer4;
 
     startTimer(dSec);
+
+    pressedButton();
+
 };
 
-
-
+/*
+ * Check to see if game is over!
+ */
+const gameOverCheck = () => {
+    if (trivIndex >= movieData.length) {
+        console.log('Game Over');
+        d.getElementById('next').removeEventListener('click', nextButtonHandler, false);
+    } else {
+        /*
+         * Play the Quiz!
+         */
+        gamePlay();
+    }
+};
 
 
 
@@ -72,17 +99,6 @@ const gamePlay = () => {
 /*
  * Countdown Timer For Quiz Game
  */
-
-
-/*
- * 
- * @param {type} dSec
- * Start Timer
- * 
- */
-
-
-
 const startTimer = (dSec) => {
     seconds = dSec;
     const newClock = d.querySelector('#clock');
@@ -96,6 +112,7 @@ const startTimer = (dSec) => {
             newClock.textContent = 'Time has Expired!';
             trivIndex += 1;
             score -= penalty;
+            d.querySelector('#score').textContent = "Score " + score + " Points";
             wrong += 1;
             calcPercent();
 
@@ -108,7 +125,7 @@ const startTimer = (dSec) => {
             newClock.textContent = 'There are ' + ((seconds < 10) ? '0' + seconds : seconds) + ' seconds left!';
             seconds--;
         }
-    }
+    };
 
 
 
@@ -121,6 +138,27 @@ const stopTimer = () => {
     clearInterval(timer);
 };
 
+const calcPercent = function () {
+    average = (right / (right + wrong)) * 100;
+    d.getElementById('percent').textContent = average.toFixed(0) + "%";
+};
+
+const calcScoring = (answer, correct) => {
+    if (answer === correct) {
+        right += 1;
+        score += points;
+        d.querySelector('#button' + correct).style['background-color'] = 'green';
+    } else {
+        wrong += 1;
+        score -= penalty;
+        d.querySelector('#button' + correct).style['background-color'] = 'green';
+        d.querySelector('#button' + answer).style['background-color'] = 'red';
+    }
+    d.querySelector('#score').textContent = "Score " + score + " Points";
+    trivIndex += 1; // Next Record:
+    calcPercent();
+};
+
 /*
  * Determine what answer button was pressed and
  * send a fetch request (promise). 
@@ -129,7 +167,8 @@ const clickHandler = function (e) {
     e.preventDefault();
     var answer = 0,
             checkAnswer = parseInt(e.target.getAttribute('data-correct')),
-            id = parseInt(e.target.parentNode.getAttribute('data-id'));
+            id = parseInt(e.target.parentNode.getAttribute('data-id')),
+            correct = 0;
     //console.log('id', id);
     switch (checkAnswer) {
         case 1:
@@ -148,47 +187,39 @@ const clickHandler = function (e) {
             answer = 0;
             break;
     }
-
-    const answerUrl = "checkanswer.php?id=" + id + "&answer=" + answer;
     stopTimer();
-    createRequest(answerUrl, pressedUISuccess, pressedUIError);
+
+
+
+    if (!errFlag) {
+        const answerUrl = "checkanswer.php?id=" + id + "&answer=" + answer;
+
+        createRequest(answerUrl, pressedUISuccess, pressedUIError);
+    } else {
+        correct = movieData[trivIndex].correct;
+        calcScoring(answer, correct);
+    }
+
+    d.getElementById('next').addEventListener('click', nextButtonHandler, false);
     for (var y = 1; y <= 4; y++) {
         d.querySelector('#button' + y).removeEventListener('click', clickHandler, false);
     }
 
+
 };
-
-
-/*
- * Add Listener to Document (Page) and Remove Next Button Listener
- */
-const pressedButton = function () {
-    d.getElementById('next').removeEventListener('click', nextButtonHandler, false);
-
-    d.querySelector('#button1').addEventListener('click', clickHandler, false);
-    d.querySelector('#button2').addEventListener('click', clickHandler, false);
-    d.querySelector('#button3').addEventListener('click', clickHandler, false);
-    d.querySelector('#button4').addEventListener('click', clickHandler, false);
-};
-
-
 
 /*
  * Goto Next Question Setup clickHandler function
  */
-function nextButtonHandler(e) {
+const nextButtonHandler = (e) => {
     e.preventDefault();
 
     for (var y = 1; y <= 4; y++) {
         d.querySelector('#button' + y).removeAttribute('style');
     }
-    gamePlay();
-    pressedButton();
+    gameOverCheck();
 }
-const calcPercent = function () {
-    average = (right / (right + wrong)) * 100;
-    d.getElementById('percent').textContent = average.toFixed(0) + "%";
-};
+
 
 /*
  * Fetch Correct Answer then Compare Against User's Answer
@@ -197,20 +228,8 @@ const pressedUISuccess = function (check) {
     var
             answer = parseInt(check.answer),
             correct = check.correct;
+    calcScoring(answer, correct);
 
-    if (answer === correct) {
-        right += 1;
-        score += points;
-        d.querySelector('#button' + correct).style['background-color'] = 'green';
-    } else {
-        wrong += 1;
-        score -= penalty;
-        d.querySelector('#button' + correct).style['background-color'] = 'green';
-        d.querySelector('#button' + answer).style['background-color'] = 'red';
-    }
-    d.querySelector('#score').textContent = "Score " + score + " Points";
-    trivIndex += 1; // Next Record:
-    calcPercent();
     /*
      * Add Next Button Event Listener 
      */
@@ -227,26 +246,73 @@ const pressedUIError = function (error) {
  * using Fetch (AJAX)
  */
 
-const quizUISuccess = function (parsedData) {
-    console.log(parsedData);
-
+const dispQuiz = () => {
     textContainer.style.display = "block";
     mainGame.style.display = 'block';
     scoring.style.display = "block";
     nextStyle.style.display = "block";
+};
+
+const quizUISuccess = function (parsedData) {
+    console.log(parsedData);
+
+
 
     const records = parsedData.length;
+    categoriesForm.style.display = "none";
     movieData = parsedData; // Store parsed data in global variable:
 
     container.setAttribute('data-records', records);
 
-    gamePlay();
+    dispQuiz();
+    gameOverCheck();
 
-    pressedButton();
+
 };
 
+/*
+ * If Database Table doesn't load for some reason this is a fallback where
+ * there's only 3 questions. 
+ */
+
 const quizUIError = function (error) {
-    console.log(error);
+    console.log("Database Table did not load", error);
+    errFlag = true;
+    movieData = [
+        {
+            id: 1,
+            question: "What actor from the movie \"Dead Poets Society\" plays Dr. James Wilson on the TV show ",
+            answer1: "Ethan Hawke",
+            answer2: "Dylan Kussman",
+            answer3: "Robert Sean Leonard",
+            answer4: "James Waterston",
+            correct: 3
+        },
+        {
+            id: 7,
+            question: "Who portrayed the Joker in \"The Dark Knight (2008)\"?",
+            answer1: "Christan Bale",
+            answer2: "Aaron Eckhart",
+            answer3: "Michael Caine",
+            answer4: "Heath Ledger",
+            correct: 4
+        },
+        {
+            id: 30,
+            question: "Follow the Sun was about what real life golf pro?",
+            answer1: "Bobby Jones",
+            answer2: "Ben Hogan",
+            answer3: "Arnold Palmer",
+            answer4: "Jack Nicklaus",
+            correct: 2
+        }
+    ];
+    categoriesForm.style.display = "none";
+    console.log('mData', movieData);
+    container.setAttribute('data-records', movieData.length);
+    dispQuiz();
+    gameOverCheck();
+
 };
 
 
@@ -279,6 +345,7 @@ const createRequest = function (url, succeed, fail) {
 
 const selectCat = function () {
     var api_key = d.querySelector('#triviaContainer').getAttribute('data-key');
+    //var api_key = '42857078e4de89da3d432bd4456faf56c4a6c58f6378332f6f2b0d6ff107f9d9';
     console.log(d.querySelector('#category').value);
     const requestUrl = quizUrl + 'category=' + d.querySelector('#category').value + '&api_key=' + api_key;
     createRequest(requestUrl, quizUISuccess, quizUIError);
