@@ -171,7 +171,7 @@ $highlight = ["normal", "normal", "normal", "normal", "normal", "normal", "selec
         <!-- Trivia Game JavaScript -->
         <script src="assets/js/promise.min.js"></script>
         <script src="assets/js/fetch.umd.js"></script>
-        <script src="assets/js/quiz_ver_03.js"></script>
+        <script src="assets/js/app.js"></script>
 
 
     </body>
