@@ -25,23 +25,14 @@ const clickHandler = (e) => {
     e.preventDefault();
 
     const myButtons = d.querySelectorAll('.answerButton');
-    //console.log(myButtons);
-
-
-    //console.log(gameData[gameIndex].question);
     const correct = gameData[gameIndex].correct;
     const userAnswer = parseInt(e.target.getAttribute('data-correct'));
 
     var right = true;
 
-    if (userAnswer === correct) {
-        console.log("Correct!");
-        console.log(userAnswer, correct);
-    } else {
-        console.log("Wrong!");
-        console.log(userAnswer, correct);
+    if (userAnswer !== correct) {
         right = false;
-    }
+    } 
 
     /*
      * Remove buttons addListeners, so users can't click
@@ -53,11 +44,7 @@ const clickHandler = (e) => {
         } else if (right && parseInt(answer.getAttribute('data-correct')) === userAnswer) {
             answer.style['background-color'] = 'green';
         }
-
-
-        console.log(answer.getAttribute('data-correct'));
         answer.removeEventListener('click', clickHandler, false);
-        //console.log(answer);
     });
 
     next.addEventListener('click', removeQuiz, false);
@@ -68,7 +55,7 @@ const clickHandler = (e) => {
 
 
 const removeQuiz = () => {
-
+    next.removeEventListener('click', removeQuiz, false);
     gameIndex++;
 
     let element = d.querySelector('#buttonContainer');
@@ -76,14 +63,13 @@ const removeQuiz = () => {
         element.removeChild(element.firstChild);
     }
 
-    createQuiz(gameData[gameIndex]);
+    createQuiz(gameData[gameIndex]); // Recreate the Quiz Display:
 
 };
 
 const createQuiz = (gameData) => {
     buttonContainer.setAttribute('data-correct', gameData.correct);
     question.textContent = gameData.question;
-    console.log(gameData);
 
     /*
      * Create Buttons then inset answers into buttons that were
@@ -95,14 +81,9 @@ const createQuiz = (gameData) => {
         gameButton.id = 'answer' + (index + 1);
         gameButton.className = 'answerButton';
         gameButton.setAttribute('data-correct', (index + 1));
-        //gameButton.textContent = value;
         gameButton.addEventListener('click', clickHandler, false);
         gameButton.appendChild(d.createTextNode(value));
     });
-
-    //.console.log(buttonContainer);
-
-
 };
 
 
@@ -112,7 +93,7 @@ const quizUISuccess = function (parsedData) {
     mainGame.style.display = 'block';
     d.querySelector('#category').removeEventListener('change', selectCat);
 
-    gameData = parsedData;
+    gameData = parsedData.sort(() => Math.random() - .5);
 
     createQuiz(gameData[gameIndex]);
 
@@ -156,7 +137,6 @@ const selectCat = function () {
 
     var api_key = d.querySelector('.triviaContainer').getAttribute('data-key');
     //var api_key = '42857078e4de89da3d432bd4456faf56c4a6c58f6378332f6f2b0d6ff107f9d9';
-    //console.log(d.querySelector('#category').value);
     const requestUrl = quizUrl + 'category=' + d.querySelector('#category').value + '&api_key=' + api_key;
     //console.log(requestUrl);
     createRequest(requestUrl, quizUISuccess, quizUIError);
@@ -164,30 +144,4 @@ const selectCat = function () {
 
 d.querySelector('#category').addEventListener('change', selectCat);
 
-
-//movieData = [
-//    {
-//        id: 1,
-//        question: "What actor from the movie \"Dead Poets Society\" plays Dr. James Wilson on the TV show ",
-//        answers: ["Ethan Hawke", "Dylan Kussman", "Robert Sean Leonard", "James Waterston"],
-//        correct: 3
-//    }
-//];
-//
-//console.log(movieData);
-//
-//movieData.forEach(function (questions, index) {
-//    console.log('Index', index);
-//});
-//
-//const buttons = document.querySelectorAll(".answerButton");
-//
-//const clickHandler = () => {
-//  console.log('Click Me!');  
-//};
-//
-//buttons.forEach(answer => {
-//    answer.addEventListener('click', clickHandler, false);
-//    //console.log(answer);
-//});
 
