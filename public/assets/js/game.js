@@ -13,13 +13,15 @@ const d = document;
 const buttonContainer = d.querySelector('#buttonContainer');
 const question = d.querySelector('#question');
 const next = d.querySelector('#next');
+const points = 100;
+const scoreText = d.querySelector('#score');
 
 var gameIndex = 0,
-        gameData = null;
+        gameData = null,
+        score = 0;
 
 const buttons = document.querySelectorAll(".answerButton");
 const mainGame = d.querySelector('#mainGame');
-
 
 const clickHandler = (e) => {
     e.preventDefault();
@@ -32,13 +34,22 @@ const clickHandler = (e) => {
 
     if (userAnswer !== correct) {
         right = false;
-    } 
+        score = score - (points/2);
+        scoreText.textContent = "Score " + score + " Points";
+    } else {
+        score += points;
+        scoreText.textContent = "Score " + score + " Points";
+    }
 
     /*
      * Remove buttons addListeners, so users can't click
      * more than once.
      */
     myButtons.forEach(answer => {
+        /*
+         * Figure out score, percentage and highlight if it is right (green)
+         * or wrong (red)
+         */
         if (!right && parseInt(answer.getAttribute('data-correct')) === userAnswer) {
             answer.style["background-color"] = 'red';
         } else if (right && parseInt(answer.getAttribute('data-correct')) === userAnswer) {
