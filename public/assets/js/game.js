@@ -2,7 +2,7 @@
  *  Trivia Game Version 2.21.02 beta using FETCH/JSON
  *  by John Pepp
  *  Started: January 14, 2020
- *  Revised: January 22, 2020 10:30 AM
+ *  Revised: January 22, 2020 9:15 PM
  */
 
 'use strict';
@@ -18,10 +18,17 @@ const scoreText = d.querySelector('#score');
 
 var gameIndex = 0,
         gameData = null,
-        score = 0;
+        score = 0,
+        answeredRight = 0,
+        answeredWrong = 0;
 
 const buttons = document.querySelectorAll(".answerButton");
 const mainGame = d.querySelector('#mainGame');
+
+const calcPercent = (correct, wrong) => {
+    var average = (correct / (correct + wrong)) * 100;
+    d.getElementById('percent').textContent = average.toFixed(0) + "%";
+};
 
 const clickHandler = (e) => {
     e.preventDefault();
@@ -35,11 +42,15 @@ const clickHandler = (e) => {
     if (userAnswer !== correct) {
         right = false;
         score = score - (points/2);
+        answeredWrong ++;
         scoreText.textContent = "Score " + score + " Points";
     } else {
         score += points;
+        answeredRight++;
         scoreText.textContent = "Score " + score + " Points";
     }
+    
+    calcPercent(answeredRight, answeredWrong);
 
     /*
      * Remove buttons addListeners, so users can't click
