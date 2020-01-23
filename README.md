@@ -1,7 +1,7 @@
 # trivia-game-01-17-2020
 Trivia Game written in Javascript, Ajax, JSON and PHP using Smarty Template System. After taking about a 3 year hiatus from programming the coding bug has bitten me. 
 
-#trivia-game-01-22-2020
+# trivia-game-01-22-2020
 I have revised the trivia game even more! The game is written with the latest javascript (JS6) for the most part and right now it might not work in older browsers and you can pretty much forget Internet Explorer.  I still have a lot of updating to this game and I will be creating branches in order for more stable versions to be available. 
 
 # History of this Trivia Game
