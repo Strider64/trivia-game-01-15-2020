@@ -1,11 +1,50 @@
 /*
- *  Trivia Game Version 2.90.02 beta using FETCH/JSON
+ *  Trivia Game Version 3.00 beta using FETCH/JSON
  *  by John Pepp
  *  Started: January 14, 2020
- *  Revised: January 30, 2020 1:40 PM
+ *  Revised: February 2, 2020 11:30 aM
  */
 
 'use strict';
+
+
+function rgba2hex(orig) {
+  var a,
+    rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
+    alpha = (rgb && rgb[4] || "").trim(),
+    hex = rgb ?
+    (rgb[1] | 1 << 8).toString(16).slice(1) +
+    (rgb[2] | 1 << 8).toString(16).slice(1) +
+    (rgb[3] | 1 << 8).toString(16).slice(1) : orig;
+
+  if (alpha !== "") {
+    a = alpha;
+  } else {
+    a = "01";
+  }
+  // multiply before convert to HEX
+  a = ((a * 255) | 1 << 8).toString(16).slice(1);
+  hex = hex + a;
+
+  return hex;
+}
+
+const myColor = (colorcode) => {
+    var hexColor = rgba2hex(colorcode);
+    return '#' + hexColor;
+};
+
+
+const myGreen = myColor("rgba(29, 100, 31, 0.70)");
+const myRed = myColor("rgba(84, 0, 30, 0.70)");
+console.log('My Green', myGreen);
+
+//console.log('Green', rgba2hex("rgba(146, 214, 22, 0.50)"));
+//myColor("rgba(0, 0, 0, 0.74)");
+//myColor("rgba(0, 0, 0, 1)");
+//myColor("rgba(0, 0, 0, 0)");
+//myColor("rgba(0, 255, 0, 0.5)");
+
 const game = () => {
     const quizUrl = 'qdatabase.php?'; // PHP database script 
     const d = document;
@@ -43,7 +82,7 @@ const game = () => {
         const countdown = () => {
             if (seconds === 0) {
                 clearTimeout(timer);
-                newClock.style['color'] = "red";
+                newClock.style['color'] = myRed;
                 newClock.textContent = "00";
                 scoringFcn(userAnswer, correct);
                 highlightFCN(userAnswer, correct);
@@ -74,13 +113,13 @@ const game = () => {
              * Highlight Answers Function
              */
             if (userAnswer === correct && userAnswer === parseInt(answer.getAttribute('data-correct'))) {
-                answer.style["background-color"] = 'green';
+                answer.style["background-color"] = myGreen;
             }
             if (userAnswer !== correct && userAnswer === parseInt(answer.getAttribute('data-correct'))) {
-                answer.style['background-color'] = 'red';
+                answer.style['background-color'] = myRed;
             }
             if (userAnswer === 5) {
-                answer.style['background-color'] = 'red';
+                answer.style['background-color'] = myRed;
             }
         });
     };
