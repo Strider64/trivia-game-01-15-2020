@@ -1,60 +1,58 @@
 /*
- *  Trivia Game Version 3.00 beta using FETCH/JSON
+ *  Trivia Game Version 3.18 beta using FETCH/JSON
  *  by John Pepp
  *  Started: January 14, 2020
- *  Revised: February 2, 2020 11:30 aM
+ *  Revised: February 5, 2020 6:30 PM
  */
 
 'use strict';
 
-
-function rgba2hex(orig) {
-  var a,
-    rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
-    alpha = (rgb && rgb[4] || "").trim(),
-    hex = rgb ?
-    (rgb[1] | 1 << 8).toString(16).slice(1) +
-    (rgb[2] | 1 << 8).toString(16).slice(1) +
-    (rgb[3] | 1 << 8).toString(16).slice(1) : orig;
-
-  if (alpha !== "") {
-    a = alpha;
-  } else {
-    a = "01";
-  }
-  // multiply before convert to HEX
-  a = ((a * 255) | 1 << 8).toString(16).slice(1);
-  hex = hex + a;
-
-  return hex;
-}
-
-const myColor = (colorcode) => {
-    var hexColor = rgba2hex(colorcode);
-    return '#' + hexColor;
-};
+const game = (defaultCategory) => {
 
 
-const myGreen = myColor("rgba(29, 100, 31, 0.70)");
-const myRed = myColor("rgba(84, 0, 30, 0.70)");
-console.log('My Green', myGreen);
+    function rgba2hex(orig) {
+        var a,
+                rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
+                alpha = (rgb && rgb[4] || "").trim(),
+                hex = rgb ?
+                (rgb[1] | 1 << 8).toString(16).slice(1) +
+                (rgb[2] | 1 << 8).toString(16).slice(1) +
+                (rgb[3] | 1 << 8).toString(16).slice(1) : orig;
 
-//console.log('Green', rgba2hex("rgba(146, 214, 22, 0.50)"));
-//myColor("rgba(0, 0, 0, 0.74)");
-//myColor("rgba(0, 0, 0, 1)");
-//myColor("rgba(0, 0, 0, 0)");
-//myColor("rgba(0, 255, 0, 0.5)");
+        if (alpha !== "") {
+            a = alpha;
+        } else {
+            a = "01";
+        }
+        // multiply before convert to HEX
+        a = ((a * 255) | 1 << 8).toString(16).slice(1);
+        hex = hex + a;
 
-const game = () => {
+        return hex;
+    }
+
+    const myColor = (colorcode) => {
+        var hexColor = rgba2hex(colorcode);
+        return '#' + hexColor;
+    };
+
+
+    const myGreen = myColor("rgba(29, 100, 31, 0.70)");
+    const myRed = myColor("rgba(84, 0, 30, 0.70)");
+
     const quizUrl = 'qdatabase.php?'; // PHP database script 
     const d = document;
 
+    const movieBtn = d.querySelector('#movie');
+    const spaceBtn = d.querySelector('#space');
+
+    const gameTitle = d.querySelector('.gameTitle');
     const buttonContainer = d.querySelector('#buttonContainer');
     const question = d.querySelector('#question');
-    const triviaLabel = d.querySelector('#triviaLabel');
     const next = d.querySelector('#next');
     const points = 100;
     const scoreText = d.querySelector('#score');
+    const percent = d.querySelector('#percent');
     const dSec = 20; // Countdown Clock for questions:
 
     var gameIndex = 0,
@@ -63,7 +61,8 @@ const game = () => {
             score = 0,
             total = 0,
             answeredRight = 0,
-            answeredWrong = 0;
+            answeredWrong = 0,
+            category = null;
 
     const buttons = document.querySelectorAll(".answerButton");
     const mainGame = d.querySelector('#mainGame');
@@ -84,8 +83,10 @@ const game = () => {
                 clearTimeout(timer);
                 newClock.style['color'] = myRed;
                 newClock.textContent = "00";
+
                 scoringFcn(userAnswer, correct);
                 highlightFCN(userAnswer, correct);
+                calcPercent(answeredRight, total);
                 disableListeners();
                 next.addEventListener('click', removeQuiz, false);
             } else {
@@ -132,7 +133,7 @@ const game = () => {
 
     const calcPercent = (correct, total) => {
         var average = (correct / total) * 100;
-        d.getElementById('percent').textContent = average.toFixed(0) + "%";
+        percent.textContent = average.toFixed(0) + "%";
     };
 
     const scoringFcn = (userAnswer, correct) => {
@@ -168,14 +169,19 @@ const game = () => {
     };
 
 
-    const removeQuiz = () => {
-        next.removeEventListener('click', removeQuiz, false);
-        gameIndex++;
-
+    const removeAnswers = () => {
         let element = d.querySelector('#buttonContainer');
         while (element.firstChild) {
             element.removeChild(element.firstChild);
         }
+    };
+
+    const removeQuiz = () => {
+        removeAnswers();
+        next.removeEventListener('click', removeQuiz, false);
+        gameIndex++;
+
+
 
         createQuiz(gameData[gameIndex]); // Recreate the Quiz Display:
 
@@ -206,14 +212,9 @@ const game = () => {
     }
 
     const quizUISuccess = function (parsedData) {
-
         mainGame.style.display = 'block';
-
-        d.querySelector('#category').removeEventListener('change', selectCat);
-        d.querySelector('#category').style.display = 'none';
-        triviaLabel.textContent = capitalizeFirstLetter(parsedData[gameIndex].category);
         gameData = parsedData.sort(() => Math.random() - .5);
-        //console.log(gameData);
+
         createQuiz(gameData[gameIndex]);
 
     };
@@ -246,11 +247,8 @@ const game = () => {
             }
         ];
 
-        //console.log(gameData);
         mainGame.style.display = 'block';
 
-        d.querySelector('#category').removeEventListener('change', selectCat);
-        d.querySelector('#category').style.display = 'none';
         createQuiz(gameData[gameIndex]);
     };
 
@@ -271,19 +269,53 @@ const game = () => {
                 .catch((error) => fail(error));
     };
 
-
-    const selectCat = function () {
-
-        var api_key = d.querySelector('.triviaContainer').getAttribute('data-key');
-        //var api_key = '42857078e4de89da3d432bd4456faf56c4a6c58f6378332f6f2b0d6ff107f9d9';
-        const requestUrl = quizUrl + 'category=' + d.querySelector('#category').value + '&api_key=' + api_key;
-        //console.log(requestUrl);
-        createRequest(requestUrl, quizUISuccess, quizUIError);
+    const resetGame = () => {
+        removeAnswers();
+        stopTimer();
+        score = 0;
+        total = 0;
+        answeredRight = 0;
+        answeredWrong = 0;
+        gameIndex = 0;
+        gameData = null;
+        scoreText.textContent = 'Score 0 Points';
+        percent.textContent = '100';
+        //window.location.reload();
     };
 
-    d.querySelector('#category').addEventListener('change', selectCat);
+    /*
+     * Start Game base ond Category
+     */
+    const selectCat = function (category) {
+        var api_key = d.querySelector('.triviaContainer').getAttribute('data-key');
+        //var api_key = '42857078e4de89da3d432bd4456faf56c4a6c58f6378332f6f2b0d6ff107f9d9';
+        const requestUrl = quizUrl + 'category=' + category + '&api_key=' + api_key;
+        createRequest(requestUrl, quizUISuccess, quizUIError);
 
+    };
+
+    const movieCat = (e) => {
+        e.preventDefault();
+        resetGame();
+        gameTitle.textContent = "Movie Questions";
+        selectCat('movie');
+    };
+
+    const spaceCat = (e) => {
+        e.preventDefault();
+        resetGame();
+        gameTitle.textContent = "Space Questions";
+        selectCat('space');
+        console.log('spaceBtn', 'click');
+    };
+    
+    d.querySelector('#addCategories').style.display = "block";
+    movieBtn.addEventListener('click', movieCat, false);
+    spaceBtn.addEventListener('click', spaceCat, false);
+
+    category = movieBtn.getAttribute('data-category');
+    selectCat(defaultCategory);
 };
 
-game();
+game('movie');
 
