@@ -33,7 +33,37 @@ body {font-family: 'Open Sans', sans-serif; font-size: 16px; font-weight: 300; c
 .exifInfo { position: absolute; bottom: 3.125em; left: 0; z-index: 20001; display: block; width: 100%; height: 3.125em; line-height: 3.125em; background-color: rgba(255,255,255, 0.65); }
 .exifInfo p { color: #000; padding-left: 30px; font-size: 1.4em; text-align: center; }
 .exitBtn { position: absolute; bottom: 0; left: 0; z-index: 2001; display: block; width: 100%; height: 50px; line-height: 50px; background-color: rgba(125,125,125, 0.65); padding-left: 30px; }
+.newSlide {
 
+    opacity: 0;
+
+
+    -webkit-transition: opacity 1s;
+    -moz-transition: opacity 1s;
+    -o-transition: opacity 1s;
+    transition: opacity 1s;
+}
+
+.showing {
+    opacity: 1;
+    z-index: 20001;
+}
+
+.oldSlide {
+
+    opacity: 1;
+
+
+    -webkit-transition: opacity 1s;
+    -moz-transition: opacity 1s;
+    -o-transition: opacity 1s;
+    transition: opacity 1s;
+}
+
+.hiding {
+    opacity: 0;
+    z-index: 20001;
+}
 
 
 #page { display: block; max-width: 75em; margin: 0 auto; position: relative; }
@@ -537,6 +567,8 @@ section.main aside .picture-box #page1 {
     display: block;
 }
 
+/* Game CSS */
+#addCategories { display: none; }
 
 .triviaContainer {
     background-color: rgba(0,0,0, 0.5);
@@ -604,9 +636,9 @@ section.main aside .picture-box #page1 {
     width: 100%;
     height: 200px;
     padding: 10px;
-    
+
     background-color: #f5f2d0;
-    
+
 }
 
 #mainGame #triviaSection #questionBox h2 {
@@ -813,14 +845,54 @@ footer a:hover { color: #000; }
     header { height: 300px; background-image: url(../images/banner_825.jpg)}
     header div.intro { top: 120px; left: 48%; }
 
-    section.main { margin-top: 0px; margin-bottom: 0px; padding: 0; }
+    section.main {  display: block; width: 90%; height: auto; margin: 0 auto; padding: 0; }
     section.main aside { width: 100%; float: left; }
 
+
     .triviaContainer {
-        background-color: rgba(188, 188, 242, 0.3);
+
+        background-color: rgba(0,0,0, 0.5);
         min-height: 0px;
         padding: 5px;
-        margin: 0 5px;
+        margin: 0;
+    }
+
+    .triviaContainer #categories-form {
+        
+        background-color: #555;
+        padding: 20px;
+    }
+
+    .triviaContainer #categories-form label {
+
+
+        height: 20px;
+        font-family: 'Teko', sans-serif;
+        font-size: 1.8em;
+        color: #fff;
+
+    }
+
+    .triviaContainer #categories-form select {
+        clear: both;
+        display: block;
+        height: 20px;
+        border: none;
+        outline: none;
+        background-color: #4b0a0c;
+        font-family: 'Teko', sans-serif;
+        font-size: 1.0em;
+        color: #fff;
+        text-transform: uppercase;
+        margin-top: 5px;
+    }
+
+
+    #mainGame {
+        display: none;
+        width: 100%;
+        height: 600px;
+        margin: 0 auto;
     }
 
 }
