@@ -1,15 +1,15 @@
 /*
- *  Trivia Game Version 3.18 beta using FETCH/JSON
+ *  Trivia Game Version 3.25 beta using FETCH/JSON
  *  by John Pepp
  *  Started: January 14, 2020
- *  Revised: February 5, 2020 6:30 PM
+ *  Revised: February 7, 2020 1:30 PM
  */
 
 'use strict';
 
 const game = (defaultCategory) => {
 
-
+    /* Convert RGBa to HEX  */
     function rgba2hex(orig) {
         var a,
                 rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
@@ -36,16 +36,19 @@ const game = (defaultCategory) => {
         return '#' + hexColor;
     };
 
-
-    const myGreen = myColor("rgba(29, 100, 31, 0.70)");
-    const myRed = myColor("rgba(84, 0, 30, 0.70)");
+    /*
+     * Constants & Variables Initialization Section.
+     */
+    const myGreen = myColor("rgba(29, 100, 31, 0.70)"); /* Green with 70% transparency */
+    const myRed = myColor("rgba(84, 0, 30, 0.70)"); /* Red with 70% transparency */
 
     const quizUrl = 'qdatabase.php?'; // PHP database script 
-    const d = document;
+    const d = document; // Shorten docoment function::
 
-    const movieBtn = d.querySelector('#movie');
+    const movieBtn = d.querySelector('#movie'); 
     const spaceBtn = d.querySelector('#space');
-
+    const photographyBtn = d.querySelector('#photography');
+    
     const gameTitle = d.querySelector('.gameTitle');
     const buttonContainer = d.querySelector('#buttonContainer');
     const question = d.querySelector('#question');
@@ -69,7 +72,7 @@ const game = (defaultCategory) => {
 
 
     /*
-     * Countdown Timer For Triva Game
+     * Start and Stop Functions for Countdown Timer For Triva Game
      */
     const startTimer = (dSec) => {
         var seconds = dSec;
@@ -106,8 +109,8 @@ const game = (defaultCategory) => {
         clearInterval(timer);
     };
 
+    /* Highlight correct or wrong answers */
     const highlightFCN = (userAnswer, correct) => {
-
         const highlights = d.querySelectorAll('.answerButton');
         highlights.forEach(answer => {
             /*
@@ -124,18 +127,22 @@ const game = (defaultCategory) => {
             }
         });
     };
+    
+    /* Disable Listeners, so users can click on answer buttons */
     const disableListeners = () => {
         const myButtons = d.querySelectorAll('.answerButton');
         myButtons.forEach(answer => {
             answer.removeEventListener('click', clickHandler, false);
         });
     };
-
+    
+    /* Calculate Percent */
     const calcPercent = (correct, total) => {
         var average = (correct / total) * 100;
         percent.textContent = average.toFixed(0) + "%";
     };
 
+    /* Figure out Score */
     const scoringFcn = (userAnswer, correct) => {
         if (userAnswer === correct) {
             score += points;
@@ -149,6 +156,7 @@ const game = (defaultCategory) => {
         total++;
     };
 
+    /* User has made selection */
     const clickHandler = (e) => {
         e.preventDefault();
         stopTimer();
@@ -156,38 +164,39 @@ const game = (defaultCategory) => {
         const correct = gameData[gameIndex].correct;
         const userAnswer = parseInt(e.target.getAttribute('data-correct'));
 
-
         scoringFcn(userAnswer, correct);
         calcPercent(answeredRight, total);
-
         highlightFCN(userAnswer, correct);
 
         disableListeners();
-
         next.addEventListener('click', removeQuiz, false);
 
     };
 
-
+    /* Remove answers from Screen */
     const removeAnswers = () => {
         let element = d.querySelector('#buttonContainer');
         while (element.firstChild) {
             element.removeChild(element.firstChild);
         }
     };
-
+    
+    /* Remove Question & Answers */
     const removeQuiz = () => {
-        removeAnswers();
+        removeAnswers(); // Call removeAnswers FCN:
         next.removeEventListener('click', removeQuiz, false);
         gameIndex++;
-
-
-
-        createQuiz(gameData[gameIndex]); // Recreate the Quiz Display:
-
+        console.log(gameIndex, gameData.length);
+        if (gameIndex < parseInt(gameData.length)) {
+            createQuiz(gameData[gameIndex]); // Recreate the Quiz Display:
+        } else {
+            question.textContent = 'Game Over';
+        }
     };
 
+    /* Populate Quesion, Create Answer Buttons */
     const createQuiz = (gameData) => {
+        document.getElementById('mainGame').scrollIntoView();
         startTimer(dSec);
         buttonContainer.setAttribute('data-correct', gameData.correct);
         question.textContent = gameData.question;
@@ -207,10 +216,7 @@ const game = (defaultCategory) => {
         });
     };
 
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
+    /* Success function utilizing FETCH */
     const quizUISuccess = function (parsedData) {
         mainGame.style.display = 'block';
         gameData = parsedData.sort(() => Math.random() - .5);
@@ -219,6 +225,7 @@ const game = (defaultCategory) => {
 
     };
 
+    /* If Database Table fails to load then answer a few hard coded Q&A */
     const quizUIError = function (error) {
         console.log("Database Table did not load", error);
 
@@ -246,7 +253,8 @@ const game = (defaultCategory) => {
                 answers: ["Glenn Ford", "Ned Beatty", "Christopher Reed", "Marlon Brando"]
             }
         ];
-
+        
+        /* Display HTML Game Display and create Quiz */
         mainGame.style.display = 'block';
 
         createQuiz(gameData[gameIndex]);
@@ -262,6 +270,7 @@ const game = (defaultCategory) => {
         return response.json();
     };
 
+    /* FETCH request */
     const createRequest = function (url, succeed, fail) {
         fetch(url)
                 .then((response) => handleErrors(response))
@@ -269,6 +278,7 @@ const game = (defaultCategory) => {
                 .catch((error) => fail(error));
     };
 
+    /* Reset the Game */
     const resetGame = () => {
         removeAnswers();
         stopTimer();
@@ -280,11 +290,10 @@ const game = (defaultCategory) => {
         gameData = null;
         scoreText.textContent = 'Score 0 Points';
         percent.textContent = '100';
-        //window.location.reload();
     };
 
     /*
-     * Start Game base ond Category
+     * Start Game by Category
      */
     const selectCat = function (category) {
         var api_key = d.querySelector('.triviaContainer').getAttribute('data-key');
@@ -297,25 +306,33 @@ const game = (defaultCategory) => {
     const movieCat = (e) => {
         e.preventDefault();
         resetGame();
-        gameTitle.textContent = "Movie Questions";
+        gameTitle.textContent = "Movie Trivia";
         selectCat('movie');
     };
 
     const spaceCat = (e) => {
         e.preventDefault();
         resetGame();
-        gameTitle.textContent = "Space Questions";
+        gameTitle.textContent = "Space Trivia";
         selectCat('space');
         console.log('spaceBtn', 'click');
     };
+
+    /*
+     * Display other categories
+     */
+    d.querySelector('#space').style.display = "block";
+    d.querySelector('#movie').style.display = "block";
     
-    d.querySelector('#addCategories').style.display = "block";
+    /* 
+     * Event handlers for other categories
+     */
     movieBtn.addEventListener('click', movieCat, false);
     spaceBtn.addEventListener('click', spaceCat, false);
 
     category = movieBtn.getAttribute('data-category');
     selectCat(defaultCategory);
 };
-
-game('movie');
+document.querySelector('.gameTitle').textContent = "Photography Trivia";
+game('photography');
 
