@@ -14,6 +14,9 @@
                             echo '<li>';
                             echo '<a class="menuExit" title="Member Page" href="member_page.php">Member</a>';
                             echo '</li>';
+                            echo '<li>';
+                            echo '<a id="maintenance" class="menuExit" title="Trivia Maintenance" href="trivMain.php">Maintenance</a>';
+                            echo '</li>';
                         }
                         ?>
                         <li>
@@ -31,10 +34,13 @@
             <a class="menuExit"  title="Contact Page" href="contact.php">Contact</a>
         </li>
         <li>
-            <a id="movie" class="menuExit" data-category="movie" title="Trivia Game" href="triviaGame.php" aria-haspopup='true'>Movie Trivia</a>
+            <a id="photography" class="menuExit" data-category="movie" title="Trivia Game" href="triviaGame.php" aria-haspopup='true'>Photography Trivia</a>
             <ul>
-                <li  id="addCategories">
+                <li>
                     <a id="space" class="menuExit" data-category="space" title="Space Trivia" href="triviaGame.php">Space Trivia</a>
+                </li>
+                <li>
+                    <a id="movie" class="menuExit" data-category="space" title="Space Trivia" href="triviaGame.php">Movie Trivia</a>
                 </li>
             </ul>
         </li>
@@ -44,7 +50,7 @@
     &copy; The Miniature Photographer
     <div class="content">
         <a class="menuExit" title="Facebook Miniature Photographer" href="https://www.facebook.com/Pepster64/">Facebook Miniature Photographer Page</a>
-<!--        <a title="Terms of Service" href="#">Terms of Service</a>-->
+        <!--        <a title="Terms of Service" href="#">Terms of Service</a>-->
     </div>
 </footer>
 </div>
