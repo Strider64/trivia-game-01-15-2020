@@ -1,60 +1,61 @@
 /*
- *  Trivia Game Version 3.00 beta using FETCH/JSON
+ *  Trivia Game Version 3.25 beta using FETCH/JSON
  *  by John Pepp
  *  Started: January 14, 2020
- *  Revised: February 2, 2020 11:30 aM
+ *  Revised: February 7, 2020 1:30 PM
  */
 
 'use strict';
 
+const game = (defaultCategory) => {
 
-function rgba2hex(orig) {
-  var a,
-    rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
-    alpha = (rgb && rgb[4] || "").trim(),
-    hex = rgb ?
-    (rgb[1] | 1 << 8).toString(16).slice(1) +
-    (rgb[2] | 1 << 8).toString(16).slice(1) +
-    (rgb[3] | 1 << 8).toString(16).slice(1) : orig;
+    /* Convert RGBa to HEX  */
+    function rgba2hex(orig) {
+        var a,
+                rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
+                alpha = (rgb && rgb[4] || "").trim(),
+                hex = rgb ?
+                (rgb[1] | 1 << 8).toString(16).slice(1) +
+                (rgb[2] | 1 << 8).toString(16).slice(1) +
+                (rgb[3] | 1 << 8).toString(16).slice(1) : orig;
 
-  if (alpha !== "") {
-    a = alpha;
-  } else {
-    a = "01";
-  }
-  // multiply before convert to HEX
-  a = ((a * 255) | 1 << 8).toString(16).slice(1);
-  hex = hex + a;
+        if (alpha !== "") {
+            a = alpha;
+        } else {
+            a = "01";
+        }
+        // multiply before convert to HEX
+        a = ((a * 255) | 1 << 8).toString(16).slice(1);
+        hex = hex + a;
 
-  return hex;
-}
+        return hex;
+    }
 
-const myColor = (colorcode) => {
-    var hexColor = rgba2hex(colorcode);
-    return '#' + hexColor;
-};
+    const myColor = (colorcode) => {
+        var hexColor = rgba2hex(colorcode);
+        return '#' + hexColor;
+    };
 
+    /*
+     * Constants & Variables Initialization Section.
+     */
+    const myGreen = myColor("rgba(29, 100, 31, 0.70)"); /* Green with 70% transparency */
+    const myRed = myColor("rgba(84, 0, 30, 0.70)"); /* Red with 70% transparency */
 
-const myGreen = myColor("rgba(29, 100, 31, 0.70)");
-const myRed = myColor("rgba(84, 0, 30, 0.70)");
-console.log('My Green', myGreen);
-
-//console.log('Green', rgba2hex("rgba(146, 214, 22, 0.50)"));
-//myColor("rgba(0, 0, 0, 0.74)");
-//myColor("rgba(0, 0, 0, 1)");
-//myColor("rgba(0, 0, 0, 0)");
-//myColor("rgba(0, 255, 0, 0.5)");
-
-const game = () => {
     const quizUrl = 'qdatabase.php?'; // PHP database script 
-    const d = document;
+    const d = document; // Shorten docoment function::
 
+    const movieBtn = d.querySelector('#movie'); 
+    const spaceBtn = d.querySelector('#space');
+    const photographyBtn = d.querySelector('#photography');
+    
+    const gameTitle = d.querySelector('.gameTitle');
     const buttonContainer = d.querySelector('#buttonContainer');
     const question = d.querySelector('#question');
-    const triviaLabel = d.querySelector('#triviaLabel');
     const next = d.querySelector('#next');
     const points = 100;
     const scoreText = d.querySelector('#score');
+    const percent = d.querySelector('#percent');
     const dSec = 20; // Countdown Clock for questions:
 
     var gameIndex = 0,
@@ -63,14 +64,15 @@ const game = () => {
             score = 0,
             total = 0,
             answeredRight = 0,
-            answeredWrong = 0;
+            answeredWrong = 0,
+            category = null;
 
     const buttons = document.querySelectorAll(".answerButton");
     const mainGame = d.querySelector('#mainGame');
 
 
     /*
-     * Countdown Timer For Triva Game
+     * Start and Stop Functions for Countdown Timer For Triva Game
      */
     const startTimer = (dSec) => {
         var seconds = dSec;
@@ -84,8 +86,10 @@ const game = () => {
                 clearTimeout(timer);
                 newClock.style['color'] = myRed;
                 newClock.textContent = "00";
+
                 scoringFcn(userAnswer, correct);
                 highlightFCN(userAnswer, correct);
+                calcPercent(answeredRight, total);
                 disableListeners();
                 next.addEventListener('click', removeQuiz, false);
             } else {
@@ -105,8 +109,8 @@ const game = () => {
         clearInterval(timer);
     };
 
+    /* Highlight correct or wrong answers */
     const highlightFCN = (userAnswer, correct) => {
-
         const highlights = d.querySelectorAll('.answerButton');
         highlights.forEach(answer => {
             /*
@@ -123,18 +127,22 @@ const game = () => {
             }
         });
     };
+    
+    /* Disable Listeners, so users can click on answer buttons */
     const disableListeners = () => {
         const myButtons = d.querySelectorAll('.answerButton');
         myButtons.forEach(answer => {
             answer.removeEventListener('click', clickHandler, false);
         });
     };
-
+    
+    /* Calculate Percent */
     const calcPercent = (correct, total) => {
         var average = (correct / total) * 100;
-        d.getElementById('percent').textContent = average.toFixed(0) + "%";
+        percent.textContent = average.toFixed(0) + "%";
     };
 
+    /* Figure out Score */
     const scoringFcn = (userAnswer, correct) => {
         if (userAnswer === correct) {
             score += points;
@@ -148,6 +156,7 @@ const game = () => {
         total++;
     };
 
+    /* User has made selection */
     const clickHandler = (e) => {
         e.preventDefault();
         stopTimer();
@@ -155,33 +164,39 @@ const game = () => {
         const correct = gameData[gameIndex].correct;
         const userAnswer = parseInt(e.target.getAttribute('data-correct'));
 
-
         scoringFcn(userAnswer, correct);
         calcPercent(answeredRight, total);
-
         highlightFCN(userAnswer, correct);
 
         disableListeners();
-
         next.addEventListener('click', removeQuiz, false);
 
     };
 
-
-    const removeQuiz = () => {
-        next.removeEventListener('click', removeQuiz, false);
-        gameIndex++;
-
+    /* Remove answers from Screen */
+    const removeAnswers = () => {
         let element = d.querySelector('#buttonContainer');
         while (element.firstChild) {
             element.removeChild(element.firstChild);
         }
-
-        createQuiz(gameData[gameIndex]); // Recreate the Quiz Display:
-
+    };
+    
+    /* Remove Question & Answers */
+    const removeQuiz = () => {
+        removeAnswers(); // Call removeAnswers FCN:
+        next.removeEventListener('click', removeQuiz, false);
+        gameIndex++;
+        console.log(gameIndex, gameData.length);
+        if (gameIndex < parseInt(gameData.length)) {
+            createQuiz(gameData[gameIndex]); // Recreate the Quiz Display:
+        } else {
+            question.textContent = 'Game Over';
+        }
     };
 
+    /* Populate Quesion, Create Answer Buttons */
     const createQuiz = (gameData) => {
+        document.getElementById('mainGame').scrollIntoView();
         startTimer(dSec);
         buttonContainer.setAttribute('data-correct', gameData.correct);
         question.textContent = gameData.question;
@@ -201,23 +216,16 @@ const game = () => {
         });
     };
 
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
+    /* Success function utilizing FETCH */
     const quizUISuccess = function (parsedData) {
-
         mainGame.style.display = 'block';
-
-        d.querySelector('#category').removeEventListener('change', selectCat);
-        d.querySelector('#category').style.display = 'none';
-        triviaLabel.textContent = capitalizeFirstLetter(parsedData[gameIndex].category);
         gameData = parsedData.sort(() => Math.random() - .5);
-        //console.log(gameData);
+
         createQuiz(gameData[gameIndex]);
 
     };
 
+    /* If Database Table fails to load then answer a few hard coded Q&A */
     const quizUIError = function (error) {
         console.log("Database Table did not load", error);
 
@@ -245,12 +253,10 @@ const game = () => {
                 answers: ["Glenn Ford", "Ned Beatty", "Christopher Reed", "Marlon Brando"]
             }
         ];
-
-        //console.log(gameData);
+        
+        /* Display HTML Game Display and create Quiz */
         mainGame.style.display = 'block';
 
-        d.querySelector('#category').removeEventListener('change', selectCat);
-        d.querySelector('#category').style.display = 'none';
         createQuiz(gameData[gameIndex]);
     };
 
@@ -264,6 +270,7 @@ const game = () => {
         return response.json();
     };
 
+    /* FETCH request */
     const createRequest = function (url, succeed, fail) {
         fetch(url)
                 .then((response) => handleErrors(response))
@@ -271,19 +278,61 @@ const game = () => {
                 .catch((error) => fail(error));
     };
 
-
-    const selectCat = function () {
-
-        var api_key = d.querySelector('.triviaContainer').getAttribute('data-key');
-        //var api_key = '42857078e4de89da3d432bd4456faf56c4a6c58f6378332f6f2b0d6ff107f9d9';
-        const requestUrl = quizUrl + 'category=' + d.querySelector('#category').value + '&api_key=' + api_key;
-        //console.log(requestUrl);
-        createRequest(requestUrl, quizUISuccess, quizUIError);
+    /* Reset the Game */
+    const resetGame = () => {
+        removeAnswers();
+        stopTimer();
+        score = 0;
+        total = 0;
+        answeredRight = 0;
+        answeredWrong = 0;
+        gameIndex = 0;
+        gameData = null;
+        scoreText.textContent = 'Score 0 Points';
+        percent.textContent = '100';
     };
 
-    d.querySelector('#category').addEventListener('change', selectCat);
+    /*
+     * Start Game by Category
+     */
+    const selectCat = function (category) {
+        var api_key = d.querySelector('.triviaContainer').getAttribute('data-key');
+        //var api_key = '42857078e4de89da3d432bd4456faf56c4a6c58f6378332f6f2b0d6ff107f9d9';
+        const requestUrl = quizUrl + 'category=' + category + '&api_key=' + api_key;
+        createRequest(requestUrl, quizUISuccess, quizUIError);
 
+    };
+
+    const movieCat = (e) => {
+        e.preventDefault();
+        resetGame();
+        gameTitle.textContent = "Movie Trivia";
+        selectCat('movie');
+    };
+
+    const spaceCat = (e) => {
+        e.preventDefault();
+        resetGame();
+        gameTitle.textContent = "Space Trivia";
+        selectCat('space');
+        console.log('spaceBtn', 'click');
+    };
+
+    /*
+     * Display other categories
+     */
+    d.querySelector('#space').style.display = "block";
+    d.querySelector('#movie').style.display = "block";
+    
+    /* 
+     * Event handlers for other categories
+     */
+    movieBtn.addEventListener('click', movieCat, false);
+    spaceBtn.addEventListener('click', spaceCat, false);
+
+    category = movieBtn.getAttribute('data-category');
+    selectCat(defaultCategory);
 };
-
-game();
+document.querySelector('.gameTitle').textContent = "Photography Trivia";
+game('photography');
 
