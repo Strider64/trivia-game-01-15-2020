@@ -10,14 +10,6 @@ include '../private/includes/header.inc.php';
 <section class="main">
     <h2 class="gameTitle">Trivia Game</h2>
     <aside class="triviaContainer" data-key="<?php echo $_SESSION['api_key'] ?>" data-records=" ">             
-<!--        <form id="categories-form" action="triviaGame.php" method="post">
-            <input type="hidden" name="modify" value="edit_entry">
-            <label for="category">Category - <span id="triviaLabel">Selection</span></label>
-            <select id="category" name="category">
-                <option value=" ">Select Category</option>
-                <option value="movie">movie</option>
-                <option value="space">space</option></select>
-        </form>-->
         <div id="mainGame">
             <div id="headerStyle">
                 <h2>Time Left: <span id="clock"></span></h2>
