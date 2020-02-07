@@ -194,7 +194,7 @@ const game = (defaultCategory) => {
         }
     };
 
-    /* Populate Quesion, Create Answer Buttons */
+    /* Populate Question, Create Answer Buttons */
     const createQuiz = (gameData) => {
         document.getElementById('mainGame').scrollIntoView();
         startTimer(dSec);
