@@ -1,3 +1,7 @@
+# trivia-game-02-07-2020
+
+Improved gameplay, added scoring, checking for end-of-game and made the game responsive for the iPhone and other smartphone devices. I also added another category calle Photography as my website is a photograpy website. I am in the process of adding a maintence page that I can enter new questions and ansers along with editing them as well. 
+
 # trivia-game-01-17-2020
 Trivia Game written in Javascript, Ajax, JSON and PHP using Smarty Template System. After taking about a 3 year hiatus from programming the coding bug has bitten me. 
 
