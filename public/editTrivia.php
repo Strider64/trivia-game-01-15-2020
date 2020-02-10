@@ -12,6 +12,7 @@ include '../private/includes/header.inc.php';
 <section class="main">
     <div id="remote">
         <a id="ePrev" class="btn" title="Previous Button" href="#">Prev</a>
+        <h2 id="status">Record No. <span id="position"></span></h2>
         <a id="eNext" class="btn" title="Next Button" href="#">Next</a>
     </div>
     <form id="editTrivia" action="editTrivia.php" method="post" data-key="<?= $_SESSION['api_key']; ?>">
