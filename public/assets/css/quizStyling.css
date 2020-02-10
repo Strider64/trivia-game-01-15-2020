@@ -79,7 +79,7 @@ p { margin: 0 0 1em 0 }
 a { color: #007eff; }
 a:visited { color: #65b1ff; }
 
-a.btn { font-size: 1.2em; text-decoration: none; color: #fff; border: 1px solid #fff; padding: 4px 15px; transition: background-color .5s; }
+a.btn { cursor: pointer; font-size: 1.2em; text-decoration: none; color: #fff; border: 1px solid #fff; padding: 4px 15px; transition: background-color .5s; }
 a.btn:hover { background-color: rgba(0, 0, 0, 0.3); }
 
 a.btn3 { font-size: 1.2em; text-decoration: none; color: #555; border: 1px solid #555; padding: 4px 15px; transition: background-color .5s; }
@@ -202,7 +202,34 @@ section.main aside .charity a.btn2:hover { background-color: rgba(0, 0, 0, 0.3);
     margin-right: 20px;
 }
 
-form#addTriviaQA {
+
+div#remote {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 800px;
+    height: 50px;
+    background-color: rgba(85,85,85,0.5);
+    padding: 10px;
+    margin: 0 auto;
+}
+
+div#remote::after { content: ''; display: block; clear: both;}
+
+div#remote #ePrev {
+    position: absolute;
+    top: 5px;
+    left: 10px;
+}
+
+div#remote #eNext {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+}
+
+/* Add and Edit Form Styling */
+form#addTriviaQA, form#editTrivia {
     display: block;
     width: 100%;
     max-width: 800px;
@@ -212,7 +239,7 @@ form#addTriviaQA {
     margin: 0 auto;
 }
 
-form#addTriviaQA fieldset {
+form#addTriviaQA fieldset, form#editTrivia fieldset {
     border: 0.125em solid #4C8FEC;
     font-size: 1.1em;
     font-weight: 700;
@@ -220,13 +247,13 @@ form#addTriviaQA fieldset {
     margin-bottom: 0.625em;
 }
 
-form#addTriviaQA legend {
+form#addTriviaQA legend, form#editTrivia legend {
     font-size: 1.2em;
     color: #4C8FEC;
     padding: 0 0.313em;
 }
 
-form#addTriviaQA .select-css {
+form#addTriviaQA .select-css, form#editTrivia .select-css  {
     display: block;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1.0em;
@@ -252,11 +279,11 @@ form#addTriviaQA .select-css {
     background-size: .65em auto, 100%; 
 }
 
-form#addTriviaQA .select-css .select-css::-ms-expand { display: none; }
+form#addTriviaQA .select-css .select-css::-ms-expand, form#editTrivia .select-css .select-css::-ms-expand { display: none; }
 
-form#addTriviaQA .select-css .select-css:hover { border-color: #888; }
+form#addTriviaQA .select-css .select-css:hover, form#editTrivia .select-css .select-css:hover { border-color: #888; }
 
-form#addTriviaQA .select-css .select-css:focus {
+form#addTriviaQA .select-css .select-css:focus, form#editTrivia .select-css .select-css:focus {
     border-color: #aaa;
     box-shadow: 0 0 1px 3px rgba(59, 153, 252, 0.7);
     box-shadow: 0 0 0 3px -moz-mac-focusring;
@@ -264,9 +291,9 @@ form#addTriviaQA .select-css .select-css:focus {
     outline: none; 
 }
 
-form#addTriviaQA .select-css .select-css option { font-weight: normal; }
+form#addTriviaQA .select-css .select-css option, form#editTrivia .select-css .select-css option { font-weight: normal; }
 
-form#addTriviaQA textarea {
+form#addTriviaQA textarea, form#editTrivia textarea {
     border: none;
     outline: none;
     resize: none;
@@ -277,11 +304,11 @@ form#addTriviaQA textarea {
     color: #4C8FEC;
     font-size: 1.2em;
     line-height: 1.5;
-    padding: 0.625em 0.313em;
+    padding: 10px;
     margin-top: 0.125em;
 }
 
-form#addTriviaQA label {
+form#addTriviaQA label, form#editTrivia label  {
     clear: left;
     float: left;
     display: block;
@@ -295,7 +322,7 @@ form#addTriviaQA label {
     padding: 0.125em 0em;
     margin: 10px 0;
 }
-form#addTriviaQA input {
+form#addTriviaQA input, form#editTrivia input {
     clear: right;
     display: block;
     width: 100%;
@@ -305,12 +332,12 @@ form#addTriviaQA input {
     outline: none;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1.2em;
-    color: #2e2e2e;
-    padding: 0.125em 0em;
+    color: #4C8FEC;
+    padding: 0.125em 7px;
     margin: 10px 0;
 }
 
-form#addTriviaQA #submitBtn {
+form#addTriviaQA #submitBtn, form#editTrivia #submitBtn {
     cursor: pointer;
     clear: both;
     border: none;
@@ -699,7 +726,8 @@ section.main aside .picture-box #page1 {
 
 .triviaContainer {
     background-color: rgba(0,0,0, 0.5);
-    min-height: 550px;
+    height: 725px;
+    min-height: 800px;
     padding: 20px;
     margin: 0 1.250em;
 }
@@ -736,7 +764,7 @@ section.main aside .picture-box #page1 {
 #mainGame {
     display: none;
     width: 100%;
-    height: 600px;
+    height: 700px;
 }
 
 #mainGame::after { content: ' '; display: block; clear: both; }
@@ -761,7 +789,7 @@ section.main aside .picture-box #page1 {
 #mainGame #triviaSection #questionBox {
     display: block;
     width: 100%;
-    height: 200px;
+    height: 400px;
     padding: 10px;
 
     background-color: #f5f2d0;
@@ -770,7 +798,7 @@ section.main aside .picture-box #page1 {
 
 #mainGame #triviaSection #questionBox h2 {
     font-family: 'Teko', sans-serif;
-    font-size: 1.2rem;
+    font-size: 1.2em;
     line-height: 1.5;
     color: rgba(85,85,85,0.6);
     vertical-align: middle;
@@ -979,7 +1007,8 @@ footer a:hover { color: #000; }
     .triviaContainer {
 
         background-color: rgba(0,0,0, 0.5);
-        min-height: 0px;
+        height: 850px;
+        min-height: 700px;
         padding: 5px;
         margin: 0;
     }
@@ -995,7 +1024,7 @@ footer a:hover { color: #000; }
 
         height: 20px;
         font-family: 'Teko', sans-serif;
-        font-size: 1.8em;
+        font-size: 1.4em;
         color: #fff;
 
     }
@@ -1013,27 +1042,69 @@ footer a:hover { color: #000; }
         text-transform: uppercase;
         margin-top: 5px;
     }
+    section.main h2.gameTitle {
+        font-size: 1.4em;
+    }
 
 
     #mainGame {
         display: none;
         width: 100%;
         height: 700px;
-        margin: 15px auto;
+        margin: 0px auto;
     }
 
     #mainGame #headerStyle {
-        font-size: 1.0em;
-        padding: 20px 20px;
-        margin: 10px;
+        font-size: 0.8em;
+        padding: 2px 5px;
+        margin: 0px 10px;
     }
-    
+
     #mainGame #triviaSection #questionBox {
         display: block;
         width: 100%;
-        height: 300px; 
+        height: 400px; 
         padding: 10px;
         background-color: #f5f2d0;
+    }
+
+    #mainGame #triviaSection #questionBox h2 {
+        font-size: 1.0em;
+    }
+
+    #mainGame #triviaSection #buttonContainer .answerButton {
+        display: block;
+        width: 100%;
+        height: 40px;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        border-top: 2px solid #7f7f7f;
+        background-color: rgba(85,85,85, 0.9);
+        font-family: 'Teko', sans-serif;
+        font-size: 1.0em;
+        color: #f5f2d0;;
+        text-align: left;
+        padding-left: 10px;
+        margin: 0;
+    }
+
+    #mainGame #nextStyle #next {
+        position: absolute;
+        top: 3px;
+        right: 10px;
+        border: none;
+        outline: none;
+        display: block;
+        width: 100%;
+        max-width: 150px;
+        height: 40px;
+        cursor: pointer;
+        background-color: #555;
+        font-family: 'Teko', sans-serif;
+        font-size: 1.4em;
+        color: #fff;
+        text-transform: capitalize;
     }
 
 }
