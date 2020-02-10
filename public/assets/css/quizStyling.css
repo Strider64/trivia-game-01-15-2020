@@ -222,6 +222,11 @@ div#remote #ePrev {
     left: 10px;
 }
 
+div#remote #status {
+    color: #fff;
+    text-align: center;
+}
+
 div#remote #eNext {
     position: absolute;
     top: 5px;
