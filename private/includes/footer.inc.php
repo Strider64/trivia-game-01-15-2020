@@ -17,6 +17,9 @@
                             echo '<li>';
                             echo '<a id="maintenance" class="menuExit" title="Trivia Maintenance" href="trivMain.php">Maintenance</a>';
                             echo '</li>';
+                            echo '<li>';
+                            echo '<a id="editPage" class="menuExit" title="Edit Page" href="editTrivia.php">Edit</a>';
+                            echo '</li>';
                         }
                         ?>
                         <li>
@@ -61,6 +64,9 @@
 
 <?php if ($basename === 'triviaGame.php') { ?>
     <script src="assets/js/game.js"></script>
+<?php } ?>
+<?php if ($basename === 'editTrivia.php') { ?>
+    <script src="assets/js/edit.js"></script>
 <?php } ?>
 </body>
 </html>
