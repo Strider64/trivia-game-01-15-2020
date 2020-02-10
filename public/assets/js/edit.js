@@ -2,6 +2,8 @@
 
 const d = document; // Shortne document to d:
 const ePrev = d.querySelector('#ePrev');
+const status = d.querySelector('#status');
+const position = d.querySelector('#position');
 const eNext = d.querySelector('#eNext');
 const submitBtn = d.querySelector('#submitBtn');
 
@@ -27,10 +29,45 @@ var tableIndex = 0,
         records = null,
         record = null;
 
+/* Convert RGBa to HEX  */
+function rgba2hex(orig) {
+    var a,
+            rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
+            alpha = (rgb && rgb[4] || "").trim(),
+            hex = rgb ?
+            (rgb[1] | 1 << 8).toString(16).slice(1) +
+            (rgb[2] | 1 << 8).toString(16).slice(1) +
+            (rgb[3] | 1 << 8).toString(16).slice(1) : orig;
+
+    if (alpha !== "") {
+        a = alpha;
+    } else {
+        a = "01";
+    }
+    // multiply before convert to HEX
+    a = ((a * 255) | 1 << 8).toString(16).slice(1);
+    hex = hex + a;
+
+    return hex;
+}
+
+const myColor = (colorcode) => {
+    var hexColor = rgba2hex(colorcode);
+    return '#' + hexColor;
+};
+
+/*
+ * Constants & Variables Initialization Section.
+ */
+const myGreen = myColor("rgba(29, 100, 31, 0.70)"); /* Green with 70% transparency */
+const myRed = myColor("rgba(84, 0, 30, 0.70)"); /* Red with 70% transparency */
+
 
 const insertData = (data) => {
 
     record = data;
+
+    position.textContent = tableIndex + 1;
 
     user_id.value = record.user_id;
     id.value = record.id;
@@ -46,6 +83,7 @@ const insertData = (data) => {
 };
 
 const forward = (e) => {
+    status.style.color = "#fff";
     e.preventDefault();
     if (tableIndex < totalRecords - 1) {
 
@@ -60,6 +98,7 @@ const forward = (e) => {
 eNext.addEventListener("click", forward, false);
 
 const reverse = (e) => {
+    status.style.color = "#fff";
     e.preventDefault();
 
     if (tableIndex > 0) {
@@ -115,6 +154,7 @@ createRequest(requestUrl, tableUISuccess, tableUIError);
 
 /* Success function utilizing FETCH */
 const saveUISuccess = function (messageData) {
+    status.style.color = myGreen;
     console.log('Data', messageData);
 };
 
