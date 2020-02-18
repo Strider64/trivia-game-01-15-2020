@@ -1,8 +1,8 @@
 /*
- *  Trivia Game Version 3.25 beta using FETCH/JSON
+ *  Trivia Game Version 3.35 beta using FETCH/JSON
  *  by John Pepp
  *  Started: January 14, 2020
- *  Revised: February 7, 2020 1:30 PM
+ *  Revised: February 17, 2020 5:30 PM
  */
 
 'use strict';
@@ -45,10 +45,10 @@ const game = (defaultCategory) => {
     const quizUrl = 'qdatabase.php?'; // PHP database script 
     const d = document; // Shorten docoment function::
 
-    const movieBtn = d.querySelector('#movie'); 
-    const spaceBtn = d.querySelector('#space');
+    //const movieBtn = d.querySelector('#movie'); 
+    //const spaceBtn = d.querySelector('#space');
     const photographyBtn = d.querySelector('#photography');
-    
+
     const gameTitle = d.querySelector('.gameTitle');
     const buttonContainer = d.querySelector('#buttonContainer');
     const question = d.querySelector('#question');
@@ -127,7 +127,7 @@ const game = (defaultCategory) => {
             }
         });
     };
-    
+
     /* Disable Listeners, so users can click on answer buttons */
     const disableListeners = () => {
         const myButtons = d.querySelectorAll('.answerButton');
@@ -135,7 +135,7 @@ const game = (defaultCategory) => {
             answer.removeEventListener('click', clickHandler, false);
         });
     };
-    
+
     /* Calculate Percent */
     const calcPercent = (correct, total) => {
         var average = (correct / total) * 100;
@@ -180,7 +180,7 @@ const game = (defaultCategory) => {
             element.removeChild(element.firstChild);
         }
     };
-    
+
     /* Remove Question & Answers */
     const removeQuiz = () => {
         removeAnswers(); // Call removeAnswers FCN:
@@ -253,7 +253,7 @@ const game = (defaultCategory) => {
                 answers: ["Glenn Ford", "Ned Beatty", "Christopher Reed", "Marlon Brando"]
             }
         ];
-        
+
         /* Display HTML Game Display and create Quiz */
         mainGame.style.display = 'block';
 
@@ -270,7 +270,7 @@ const game = (defaultCategory) => {
         return response.json();
     };
 
-    /* FETCH request */
+    /* create FETCH request */
     const createRequest = function (url, succeed, fail) {
         fetch(url)
                 .then((response) => handleErrors(response))
@@ -302,37 +302,31 @@ const game = (defaultCategory) => {
         createRequest(requestUrl, quizUISuccess, quizUIError);
 
     };
+    var choose = document.querySelector('#selectCat');
 
-    const movieCat = (e) => {
-        e.preventDefault();
-        resetGame();
-        gameTitle.textContent = "Movie Trivia";
-        selectCat('movie');
+    const capitalize = (s) => {
+        if (typeof s !== 'string')
+            return '';
+        return s.charAt(0).toUpperCase() + s.slice(1);
     };
 
-    const spaceCat = (e) => {
+    const selection = (e) => {
         e.preventDefault();
+        var category = e.target.value;
+        document.querySelector('.gameTitle').textContent = capitalize(category) + ' Trivia';
+        //document.querySelector('#gameCat').style.display= "none";
+        document.querySelector('.triviaContainer').style.display = "block";
         resetGame();
-        gameTitle.textContent = "Space Trivia";
-        selectCat('space');
-        console.log('spaceBtn', 'click');
+        selectCat(category);
+        console.log(e.target.value);
     };
 
-    /*
-     * Display other categories
-     */
-    d.querySelector('#space').style.display = "block";
-    d.querySelector('#movie').style.display = "block";
-    
-    /* 
-     * Event handlers for other categories
-     */
-    movieBtn.addEventListener('click', movieCat, false);
-    spaceBtn.addEventListener('click', spaceCat, false);
+    choose.addEventListener('change', selection, false);
 
-    category = movieBtn.getAttribute('data-category');
     selectCat(defaultCategory);
 };
 document.querySelector('.gameTitle').textContent = "Photography Trivia";
 game('photography');
+
+
 
