@@ -1,11 +1,14 @@
 <nav>
     <ul>
         <li>
-            <a class="menuExit"  title="Home Page" href="index.php" aria-haspopup='true'>Home</a>
+            <a class="menuExit"  title="Home Page" href="index.php">Home</a>
+
+
+
+        </li>
+        <li>
+            <a class="menuExit"  title="Blog Page" href="blog.php"aria-haspopup='true'>Blog</a>
             <ul>
-                <li>
-                    <a class="menuExit"  title="Blog Page" href="blog.php">Blog</a>
-                </li>
                 <li>
                     <a class="menuExit"  title="Gallery" href="gallery.php" aria-haspopup='true'>Gallery</a>
                     <ul>
@@ -37,15 +40,7 @@
             <a class="menuExit"  title="Contact Page" href="contact.php">Contact</a>
         </li>
         <li>
-            <a id="photography" class="menuExit" data-category="movie" title="Trivia Game" href="triviaGame.php" aria-haspopup='true'>Photography Trivia</a>
-            <ul>
-                <li>
-                    <a id="space" class="menuExit" data-category="space" title="Space Trivia" href="triviaGame.php">Space Trivia</a>
-                </li>
-                <li>
-                    <a id="movie" class="menuExit" data-category="space" title="Space Trivia" href="triviaGame.php">Movie Trivia</a>
-                </li>
-            </ul>
+            <a id="photography" class="menuExit" data-category="movie" title="Trivia Game" href="game.php">Photography Trivia</a>
         </li>
     </ul>
 </nav><!-- End of Navigation -->
@@ -57,12 +52,13 @@
     </div>
 </footer>
 </div>
-<?php if ($basename === 'blog.php' || $basename === 'index.php' || $basename === 'about.php' || $basename === 'gallery.php') { ?>
-    <script src="assets/js/pagination.js"></script>
+<?php if ($basename === 'blog.php' || $basename === 'index.php' || $basename === 'about.php' || $basename === 'gallery.php') { ?>    
     <script src="assets/js/myLightRoom.js"></script>
 <?php } ?>
-
-<?php if ($basename === 'triviaGame.php') { ?>
+<?php if ($basename === 'blog.php' || $basename === 'gallery.php') { ?>    
+    <script src="assets/js/pagination.js"></script>
+<?php } ?>
+<?php if ($basename === 'game.php') { ?>
     <script src="assets/js/game.js"></script>
 <?php } ?>
 <?php if ($basename === 'editTrivia.php') { ?>
