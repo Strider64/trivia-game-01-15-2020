@@ -127,7 +127,7 @@ const game = (defaultCategory) => {
         });
     };
 
-    /* Disable Listeners, so users can click on answer buttons */
+    /* Disable Listeners, so users can't click on answer buttons */
     const disableListeners = () => {
         const myButtons = d.querySelectorAll('.answerButton');
         myButtons.forEach(answer => {
