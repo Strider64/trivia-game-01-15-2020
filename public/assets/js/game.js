@@ -1,16 +1,17 @@
 /*
- *  Trivia Game Version 3.35 beta using FETCH/JSON
+ *  Trivia Game Version 4.00 beta using FETCH/JSON
  *  by John Pepp
  *  Started: January 14, 2020
- *  Revised: February 17, 2020 5:30 PM
+ *  Revised: March 2, 2020 @ 2:15 AM
  */
 
 'use strict';
 
 const game = (defaultCategory) => {
 
+
     /* Convert RGBa to HEX  */
-    function rgba2hex(orig) {
+    const rgba2hex = (orig) => {
         var a,
                 rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
                 alpha = (rgb && rgb[4] || "").trim(),
@@ -29,7 +30,7 @@ const game = (defaultCategory) => {
         hex = hex + a;
 
         return hex;
-    }
+    };
 
     const myColor = (colorcode) => {
         var hexColor = rgba2hex(colorcode);
@@ -45,8 +46,6 @@ const game = (defaultCategory) => {
     const quizUrl = 'qdatabase.php?'; // PHP database script 
     const d = document; // Shorten docoment function::
 
-    //const movieBtn = d.querySelector('#movie'); 
-    //const spaceBtn = d.querySelector('#space');
     const photographyBtn = d.querySelector('#photography');
 
     const gameTitle = d.querySelector('.gameTitle');
@@ -80,7 +79,7 @@ const game = (defaultCategory) => {
         const newClock = d.querySelector('#clock');
 
         newClock.style['color'] = 'white';
-        newClock.textContent = ((seconds < 10) ? '0' + seconds : seconds);
+        newClock.textContent = ((seconds < 10) ? `0${seconds}` : seconds);
         const countdown = () => {
             if (seconds === 0) {
                 clearTimeout(timer);
@@ -93,7 +92,7 @@ const game = (defaultCategory) => {
                 disableListeners();
                 next.addEventListener('click', removeQuiz, false);
             } else {
-                newClock.textContent = ((seconds < 10) ? '0' + seconds : seconds);
+                newClock.textContent = ((seconds < 10) ? `0${seconds}` : seconds);
                 seconds--;
             }
         };
@@ -147,11 +146,11 @@ const game = (defaultCategory) => {
         if (userAnswer === correct) {
             score += points;
             answeredRight++;
-            scoreText.textContent = "Score " + score + " Points";
+            scoreText.textContent = `Score ${score} Points`;
         } else {
             score = score - (points / 2);
             answeredWrong++;
-            scoreText.textContent = "Score " + score + " Points";
+            scoreText.textContent = `Score ${score} Points`;
         }
         total++;
     };
@@ -298,7 +297,8 @@ const game = (defaultCategory) => {
     const selectCat = function (category) {
         var api_key = d.querySelector('.triviaContainer').getAttribute('data-key');
         //var api_key = '42857078e4de89da3d432bd4456faf56c4a6c58f6378332f6f2b0d6ff107f9d9';
-        const requestUrl = quizUrl + 'category=' + category + '&api_key=' + api_key;
+        const requestUrl = `${quizUrl}category=${category}&api_key=${api_key}`;
+
         createRequest(requestUrl, quizUISuccess, quizUIError);
 
     };
