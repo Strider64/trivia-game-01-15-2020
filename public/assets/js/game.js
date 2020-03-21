@@ -195,7 +195,14 @@ const game = (defaultCategory) => {
 
     /* Populate Question, Create Answer Buttons */
     const createQuiz = (gameData) => {
+        
+        /*
+         * The Element interface's scrollIntoView() method scrolls the element's
+         * parent container such that the element on which 
+         * scrollIntoView() is called is visible to the user
+         */
         document.getElementById('mainGame').scrollIntoView();
+        
         startTimer(dSec);
         buttonContainer.setAttribute('data-correct', gameData.correct);
         question.textContent = gameData.question;
