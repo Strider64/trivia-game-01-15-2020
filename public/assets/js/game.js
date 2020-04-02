@@ -63,8 +63,7 @@ const game = (defaultCategory) => {
             score = 0,
             total = 0,
             answeredRight = 0,
-            answeredWrong = 0,
-            category = null;
+            answeredWrong = 0;
 
     const buttons = document.querySelectorAll(".answerButton");
     const mainGame = d.querySelector('#mainGame');
@@ -171,21 +170,51 @@ const game = (defaultCategory) => {
         total++;
     };
 
-    /* User has made selection */
-    const clickHandler = (e) => {
-        e.preventDefault();
-        stopTimer();
+    /*
+     * Throw error response if something is wrong: 
+     */
+    const handleErrors = function (response) {
+        if (!response.ok) {
+            throw (response.status + ' : ' + response.statusText);
+        }
+        return response.json();
+    };
 
-        const correct = gameData[gameIndex].correct;
-        const userAnswer = parseInt(e.target.getAttribute('data-correct'));
-
+    /* Success function utilizing FETCH */
+    const checkUISuccess = function (parsedData) {
+        var correct = parseInt(parsedData.correct);
+        var userAnswer = parseInt(d.querySelector('#headerStyle').getAttribute('data-user'));
         scoringFcn(userAnswer, correct);
         calcPercent(answeredRight, total);
         highlightFCN(userAnswer, correct);
 
         disableListeners();
         next.addEventListener('click', removeQuiz, false);
+    };
 
+    /* If Database Table fails to load then answer a few hard coded Q&A */
+    const checkUIError = function (error) {
+        console.log("Database Table did not load", error);
+
+    };
+
+    /* create FETCH request */
+    const checkRequest = function (url, succeed, fail) {
+        fetch(url)
+                .then((response) => handleErrors(response))
+                .then((data) => succeed(data))
+                .catch((error) => fail(error));
+    };
+
+    /* User has made selection */
+    const clickHandler = (e) => {
+        e.preventDefault();
+        stopTimer();
+        const userAnswer = parseInt(e.target.getAttribute('data-correct'));
+        const id = parseInt(gameData[gameIndex].id);
+        const checkUrl = "check.php?id=" + id;
+        checkRequest(checkUrl, checkUISuccess, checkUIError);
+        d.querySelector('#headerStyle').setAttribute('data-user', userAnswer);
     };
 
     /* Remove answers from Screen */
@@ -201,7 +230,7 @@ const game = (defaultCategory) => {
         removeAnswers(); // Call removeAnswers FCN:
         next.removeEventListener('click', removeQuiz, false);
         gameIndex++;
-        console.log(gameIndex, gameData.length);
+
         if (gameIndex < parseInt(gameData.length)) {
             createQuiz(gameData[gameIndex]); // Recreate the Quiz Display:
         } else {
@@ -244,6 +273,7 @@ const game = (defaultCategory) => {
 
     /* Success function utilizing FETCH */
     const quizUISuccess = function (parsedData) {
+
         mainGame.style.display = 'block';
         //gameData = parsedData.sort(() => Math.random() - .5);
         gameData = parsedData;
@@ -286,15 +316,7 @@ const game = (defaultCategory) => {
         createQuiz(gameData[gameIndex]);
     };
 
-    /*
-     * Throw error response if something is wrong: 
-     */
-    const handleErrors = function (response) {
-        if (!response.ok) {
-            throw (response.status + ' : ' + response.statusText);
-        }
-        return response.json();
-    };
+
 
     /* create FETCH request */
     const createRequest = function (url, succeed, fail) {
