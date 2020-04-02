@@ -194,7 +194,24 @@ const game = (defaultCategory) => {
 
     /* If Database Table fails to load then answer a few hard coded Q&A */
     const checkUIError = function (error) {
-        console.log("Database Table did not load", error);
+
+        switch (gameData[gameIndex].id) {
+            case 1:
+                var correct = gameData[gameIndex].correct;
+                break;
+            case 55:
+                var correct = gameData[gameIndex].correct;
+                break;
+            case 9:
+                var correct = gameData[gameIndex].correct;
+        }
+        var userAnswer = parseInt(d.querySelector('#headerStyle').getAttribute('data-user'));
+        scoringFcn(userAnswer, correct);
+        calcPercent(answeredRight, total);
+        highlightFCN(userAnswer, correct);
+
+        disableListeners();
+        next.addEventListener('click', removeQuiz, false);
 
     };
 
@@ -213,6 +230,7 @@ const game = (defaultCategory) => {
         const userAnswer = parseInt(e.target.getAttribute('data-correct'));
         const id = parseInt(gameData[gameIndex].id);
         const checkUrl = "check.php?id=" + id;
+        //const checkUrl = "check.php?error=" + id;
         checkRequest(checkUrl, checkUISuccess, checkUIError);
         d.querySelector('#headerStyle').setAttribute('data-user', userAnswer);
     };
@@ -249,7 +267,7 @@ const game = (defaultCategory) => {
         document.getElementById('mainGame').scrollIntoView();
 
         startTimer(dSec);
-        buttonContainer.setAttribute('data-correct', gameData.correct);
+
         question.textContent = gameData.question;
 
         /*
