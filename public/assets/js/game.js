@@ -271,7 +271,7 @@ const game = (defaultCategory) => {
         question.textContent = gameData.question;
 
         /*
-         * Create Buttons then inset answers into buttons that were
+         * Create Buttons then insert answers into buttons that were
          * create. 
          */
         gameData.answers.forEach((value, index) => {
