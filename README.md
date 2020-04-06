@@ -1,3 +1,8 @@
+# trivia-game-tutorial-04-06-2020
+I am in the process of writing a tutorial on this vanilla jascript game at https://www.miniaturephotographer.com/phpBB3/viewtopic.php?f=2&t=9 
+
+It's a work-in-progress as I doing a little bit each day, so keep checing back and the tutorial will eventually be finished. 
+
 # trivia-game-02-07-2020
 
 Improved gameplay, added scoring, checking for end-of-game and made the game responsive for the iPhone and other smartphone devices. I also added a Photography category as my website is a photograpy website. I am in the process of adding a maintence page that I can enter new questions and ansers along with editing them as well. 
