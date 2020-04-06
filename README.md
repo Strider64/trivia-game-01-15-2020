@@ -1,7 +1,7 @@
 # trivia-game-tutorial-04-06-2020
 I am in the process of writing a tutorial on this vanilla jascript game at https://www.miniaturephotographer.com/phpBB3/viewtopic.php?f=2&t=9 
 
-It's a work-in-progress as I doing a little bit each day, so keep checing back and the tutorial will eventually be finished. 
+It's a work-in-progress as I am doing a little bit each day, so keep checing back and the tutorial will eventually be finished. 
 
 # trivia-game-02-07-2020
 
