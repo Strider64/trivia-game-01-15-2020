@@ -15,7 +15,7 @@ $_SESSION['api_key'] = bin2hex(random_bytes(32)); // 64 characters long
         <title>Trivia</title>
         <link rel="shortcut icon" href="favicon.ico" >
 
-        
+
         <script type="text/javascript"src="assets/js/game.js" defer></script>
 
 
@@ -96,55 +96,7 @@ $_SESSION['api_key'] = bin2hex(random_bytes(32)); // 64 characters long
                 </div>
 
             </section> <!-- End of Section -->
-            <nav>
-                <ul>
-                    <li>
-                        <a class="menuExit"  title="Home Page" href="index.php">Home</a>
-
-
-
-                    </li>
-                    <li>
-                        <a class="menuExit"  title="Blog Page" href="blog.php"aria-haspopup='true'>Wild Side</a>
-                        <ul>
-                            <li>
-                                <a class="menuExit"  title="Gallery" href="gallery.php" aria-haspopup='true'>Gallery</a>
-                                <ul>
-                                    <?php
-                                    if (is_logged_in()) {
-                                        echo '<li>';
-                                        echo '<a class="menuExit" title="Member Page" href="member_page.php">Member</a>';
-                                        echo '</li>';
-                                        echo '<li>';
-                                        echo '<a id="maintenance" class="menuExit" title="Trivia Maintenance" href="trivMain.php">Maintenance</a>';
-                                        echo '</li>';
-                                        echo '<li>';
-                                        echo '<a id="editPage" class="menuExit" title="Edit Page" href="editTrivia.php">Edit</a>';
-                                        echo '</li>';
-                                    }
-                                    ?>
-                                    <li>
-                                        <?php echo (is_logged_in()) ? '<a class="menuExit" title="Logout" href="logout.php">Logout</a>' : '<a class="menuExit"  title="Login Page" href="login.php">Login</a>'; ?>
-                                    </li>
-
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a class="menuExit"  title="About Me" href="about.php">About</a>
-                    </li>
-                    <li>
-                        <a class="menuExit"  title="Contact Page" href="contact.php">Contact</a>
-                    </li>
-                    <li>
-                        <a id="photography" class="menuExit" data-category="movie" title="Trivia Game" href="game.php">Photography Trivia</a>
-                    </li>
-                    <li>
-                        <a class="menuExit"  title="Astronomy Picture of the Day" href="nasa.php">APOD</a>
-                    </li>
-                </ul>
-            </nav><!-- End of Navigation -->
+            <?php include '../private/includes/navigation.inc.php'; ?>
             <footer>
                 &copy; The Miniature Photographer
                 <div class="content">
