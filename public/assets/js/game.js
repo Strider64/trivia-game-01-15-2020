@@ -1,14 +1,11 @@
 /*
- *  Trivia Game Version 4.50 beta using FETCH/JSON
+ *  Trivia Game Version 4.55 beta using FETCH/JSON
  *  by John Pepp
  *  Started: January 14, 2020
- *  Revised: April 8, 2020 @ 7:15 am
+ *  Revised: April 8, 2020 @ 10:00 PM
  */
 
 'use strict';
-
-
-
 
 /* Convert RGBa to HEX  */
 const rgba2hex = (orig) => {
@@ -226,12 +223,12 @@ const checkRequest = function (url, succeed, fail) {
 
 /* User has made selection */
 const clickHandler = (e) => {
-    e.preventDefault();
-    stopTimer();
+    const api_key = d.querySelector('.triviaContainer').getAttribute('data-key');
     const userAnswer = parseInt(e.target.getAttribute('data-correct'));
     const id = parseInt(gameData[gameIndex].id);
-    const checkUrl = "check.php?id=" + id;
-    //const checkUrl = "check.php?error=" + id;
+    const checkUrl = `check.php?id=${id}&api_key=${api_key}`;
+
+    stopTimer();
     checkRequest(checkUrl, checkUISuccess, checkUIError);
     d.querySelector('#headerStyle').setAttribute('data-user', userAnswer);
 };
