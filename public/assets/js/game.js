@@ -63,6 +63,8 @@ var gameIndex = 0,
         answeredWrong = 0,
         choose = d.querySelector('#selectCat');
 
+var responseAns = {};
+
 const buttons = d.querySelectorAll(".answerButton");
 const mainGame = d.querySelector('#mainGame');
 
@@ -190,7 +192,7 @@ const checkUISuccess = function (parsedData) {
     next.addEventListener('click', removeQuiz, false);
 };
 
-/* If Database Table fails to load then answer a few hard coded Q&A */
+/* If Database Table fails to load then hard code the correct answers */
 const checkUIError = function (error) {
 
     switch (gameData[gameIndex].id) {
@@ -215,19 +217,21 @@ const checkUIError = function (error) {
 
 /* create FETCH request */
 const checkRequest = function (url, succeed, fail) {
-    fetch(url)
-            .then((response) => handleErrors(response))
-            .then((data) => succeed(data))
-            .catch((error) => fail(error));
+        fetch(url, {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(responseAns)
+
+        })
+                .then((response) => handleErrors(response))
+                .then((data) => succeed(data))
+                .catch((error) => fail(error));
 };
 
 /* User has made selection */
 const clickHandler = (e) => {
-    const api_key = d.querySelector('.triviaContainer').getAttribute('data-key');
     const userAnswer = parseInt(e.target.getAttribute('data-correct'));
-    const id = parseInt(gameData[gameIndex].id);
-    const checkUrl = `check.php?id=${id}&api_key=${api_key}`;
-
+    responseAns.id = parseInt(gameData[gameIndex].id); // { id: integer } 
+    const checkUrl = "check.php";
     stopTimer();
     checkRequest(checkUrl, checkUISuccess, checkUIError);
     d.querySelector('#headerStyle').setAttribute('data-user', userAnswer);
@@ -303,9 +307,9 @@ const createQuiz = (gameData) => {
 
 /* Success function utilizing FETCH */
 const quizUISuccess = (parsedData) => {
-
+    console.log('Data', parsedData);
     mainGame.style.display = 'block';
-    //gameData = parsedData.sort(() => Math.random() - .5);
+    //gameData = parsedData.sort(() => Math.random() - .5); // randomize questions:
     gameData = parsedData;
     createQuiz(gameData[gameIndex]);
 
