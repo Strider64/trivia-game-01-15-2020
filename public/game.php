@@ -5,6 +5,7 @@ use Library\Read\Read;
 use Library\Database\Database as DB;
 
 $_SESSION['api_key'] = bin2hex(random_bytes(32)); // 64 characters long
+
 ?>
 <!DOCTYPE html>
 

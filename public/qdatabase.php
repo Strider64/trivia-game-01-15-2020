@@ -41,7 +41,8 @@ header('Content-type: application/json');
 $category = htmlspecialchars($_GET['category']);
 $api_key = htmlspecialchars($_GET['api_key']); // Not Need if you are not using:
 
-if ($api_key === $_SESSION['api_key'] && isset($category)) { // Get rid of $api_key if not using:
+if (isset($api_key) && $api_key === $_SESSION['api_key'] && isset($category)) { // Get rid of $api_key if not using:
+        
     /*
      * Call the readData Function
      */

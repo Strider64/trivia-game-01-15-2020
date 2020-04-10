@@ -2,6 +2,15 @@
 
 require_once '../private/initialize.php';
 
+/* Makes it so we don't have to decode the json coming from JQuery */
+header('Content-type: application/json');
+
+/*
+ * The below must be used in order for the json to be decoded properly.
+ */
+$data = json_decode(file_get_contents('php://input'), true);
+
+
 /*
  * Database Connection 
  */
@@ -28,17 +37,10 @@ function check($id, $pdo) {
 }
 
 
-/* Makes it so we don't have to decode the json coming from JQuery */
-header('Content-type: application/json');
 
-$id = htmlspecialchars($_GET['id']);
-$api_key = htmlspecialchars($_GET['api_key']); // Not Need if you are not using:
 
-if (isset($id) && $api_key === $_SESSION['api_key']) {
-
-    $data = check($id, $pdo);
-    output($data);
-}
+$result = check($data['id'], $pdo);
+output($result);
 
 function errorOutput($output, $code = 500) {
     http_response_code($code);
