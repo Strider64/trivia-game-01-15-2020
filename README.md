@@ -1,3 +1,6 @@
+# trivia-game-tutorial-04-10-2020
+Improved fetching the questions and answers data from the database table, plus made it harder to cheat by using the POST method instead of the GET method when it comes to checking the correct answer. 
+
 # trivia-game-tutorial-04-06-2020
 I am in the process of writing a tutorial on this vanilla jascript game at https://www.miniaturephotographer.com/phpBB3/viewtopic.php?f=2&t=9 
 
